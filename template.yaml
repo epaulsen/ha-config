@@ -1,0 +1,251 @@
+    - sensor:
+        - name: "Søppeltømming i morgen"
+          unique_id: "soppeltomming_i_morgen"
+          icon: mdi:trash-can
+          state: >
+            {% set tomming=0 %}
+            {% if states('sensor.avfallsor_bio_ab2ad662_7a53_4453_bf5b_4bb0b932c3be') | float == 1 %}
+            {% set tomming=1 %}
+            {% endif %}
+            {%if states('sensor.avfallsor_metal_ab2ad662_7a53_4453_bf5b_4bb0b932c3be') | float ==1 %}
+            {% set tomming=1 %}
+            {% endif %}
+            {%if states('sensor.avfallsor_mixed_ab2ad662_7a53_4453_bf5b_4bb0b932c3be') | float ==1 %}
+            {% set tomming=1 %}
+            {% endif %}
+            {%if states('sensor.avfallsor_paper_ab2ad662_7a53_4453_bf5b_4bb0b932c3be') | float ==1 %}
+            {% set tomming=1 %}
+            {% endif %}
+            {%if states('sensor.avfallsor_plastic_ab2ad662_7a53_4453_bf5b_4bb0b932c3be') | float ==1 %}
+            {% set tomming=1 %}
+            {% endif %}
+            {{ tomming }}
+
+        - name: "Temperatur kjellergang"
+          icon: "mdi:thermometer"
+          unit_of_measurement: "C"
+          state: "{{ state_attr('climate.gang_kjeller','current_temperature') | float }}"
+
+        # Sum av alt målt strømforbruk
+        # Husk å oppdatere denne når nye enheter legges til.
+        - name: "Sum av alt forbruk"
+          unique_id: sum_measured_consumption_w
+          unit_of_measurement: "W"
+          icon: "mdi:lightning-bolt-outline"
+          state: >
+            {{states('sensor.ehzyxy7d_power') | float * 1000
+            + states('sensor.shellypro1pm_30c6f781b29c_power') | float
+            + states('sensor.a_l_soverom') | float
+            + states('sensor.bad_kjeller') | float
+            + states('sensor.e_og_l_a_soverom') | float
+            + states('sensor.gang_kjeller') | float
+            + states('sensor.tobias_soverom') | float
+            + states('sensor.m_h_soverom') | float
+            + states('sensor.oppvaskmaskin_power') | float
+            + states('sensor.shelly_vaskerom_power') | float
+            + states('sensor.shelly1pm_244cab433137_power') | float
+            }}
+
+        # Utregning av faktisk timepris, basert på nordpool spot
+        # LOS COOP avtale har spot + påslag av 3,45 øre/kWh
+        # I tillegg så er nettleie på 52,51 øre på dagtid, og 42,51 øre på natt.
+        - name: "LOS timepris inkl nettleie NOK/kWh"
+          unit_of_measurement: "NOK/kWh"
+          icon: mdi:currency-usd
+          state: >
+            {% set s = {
+                "nettleie_natt": 0.5251,
+                "nettleie_dag": 0.4251,
+                "paaslag": 0.0345
+            }
+            %}
+            {% if now().hour >=6 and now().hour <23 %}
+                {% set cost = s.nettleie_dag + s.paaslag |float %}
+            {%else%}
+                {% set cost = s.nettleie_natt + s.paaslag |float %}
+            {% endif %}
+            {{ (states('sensor.nordpool_kwh_krsand_nok_3_095_025') | float) + (cost | float) }}
+
+
+        - name: "Elbil ladetid"
+          unique_id: "elbil_ladetid_hours"
+          state: >
+            {% set battery = states('input_number.elbil_batteristorrelse') | float %}
+            {% set speed = states('input_number.elbil_lader_hastighet') | float %}
+            {{((1 - (states('input_select.elbil_soc') | float) / 100) * battery * 1000 / speed) | round(method='ceil')}}
+
+
+        - name: "Elbil kabel tilkobled"
+          unique_id: "elbil_ladekabel_tilkoblet"
+          state: >
+            {% if states('sensor.ehzyxy7d_status')=='disconnected' %}
+            off
+            {%else%}
+            on
+            {%endif%}
+
+        # Regn ut kostnad for elbil basert på utility meter for Easee laderobot
+        - name: "Elbil ladekostnad"
+          unit_of_measurement: "NOK"
+          icon: "mdi:cash-check"
+          state: >
+            {%set energy=0 %}
+            {%if states('sensor.ehzyxy7d_energy_per_hour') != 'unavailable'%}
+              {% set energy = states('sensor.ehzyxy7d_energy_per_hour') | float %}
+            {%endif%}
+            {{ (states('sensor.los_timepris_inkl_nettleie_nok_kwh') | float) * energy }}
+
+        # Regn ut kostnad per målt entitet
+        - name: "Varmtvannsbereder kostnad"
+          unit_of_measurement: "NOK"
+          unique_id: varmtvannsbereder_kostnad
+          icon: "mdi:cash-check"
+          state: >
+            {%set energy=0 %}
+            {%if states('sensor.vvb_energi_per_time') != 'unavailable'%}
+              {% set energy = states('sensor.vvb_energi_per_time') | float %}
+            {%endif%}
+            {{ (states('sensor.los_timepris_inkl_nettleie_nok_kwh') | float) * energy }}
+
+        - name: "Soverom 1 kostnad"
+          unit_of_measurement: "NOK"
+          unique_id: soverom1_kostnad
+          icon: "mdi:cash-check"
+          state: >
+            {%set energy=0 %}
+            {%if states('sensor.soverom_1_energi_per_time') != 'unavailable'%}
+              {% set energy = states('sensor.soverom_1_energi_per_time') | float %}
+            {%endif%}
+            {{ (states('sensor.los_timepris_inkl_nettleie_nok_kwh') | float) * energy }}
+        - name: "Soverom 3 kostnad"
+          unit_of_measurement: "NOK"
+          unique_id: soverom3_kostnad
+          icon: "mdi:cash-check"
+          state: >
+            {%set energy=0 %}
+            {%if states('sensor.soverom_3_energi_per_time') != 'unavailable'%}
+              {% set energy = states('sensor.soverom_3_energi_per_time') | float %}
+            {%endif%}
+            {{ (states('sensor.los_timepris_inkl_nettleie_nok_kwh') | float) * energy }}
+        - name: "Kjellergang kostnad"
+          unit_of_measurement: "NOK"
+          unique_id: kjellergang_kostnad
+          icon: "mdi:cash-check"
+          state: >
+            {%set energy=0 %}
+            {%if states('sensor.kjellergang_energi_per_time') != 'unavailable'%}
+              {% set energy = states('sensor.kjellergang_energi_per_time') | float %}
+            {%endif%}
+            {{ (states('sensor.los_timepris_inkl_nettleie_nok_kwh') | float) * energy }}
+        - name: "Bad kjeller kostnad"
+          unit_of_measurement: "NOK"
+          unique_id: bad_kjeller_kostnad
+          icon: "mdi:cash-check"
+          state: >
+            {%set energy=0 %}
+            {%if states('sensor.bad_kjeller_energi_per_time') != 'unavailable'%}
+              {% set energy = states('sensor.bad_kjeller_energi_per_time') | float %}
+            {%endif%}
+            {{ (states('sensor.los_timepris_inkl_nettleie_nok_kwh') | float) * energy }}
+        - name: "Oppvaskmaskin kostnad"
+          unit_of_measurement: "NOK"
+          unique_id: oppvaskmaskin_kostnad
+          icon: "mdi:cash-check"
+          state: >
+            {%set energy=0 %}
+            {%if states('sensor.oppvaskmaskin_energi_per_time') != 'unavailable' %}
+              {% set energy = states('sensor.oppvaskmaskin_energi_per_time') | float %}
+            {%endif%}
+            {{ (states('sensor.los_timepris_inkl_nettleie_nok_kwh') | float) * energy }}
+        - name: "Varmtvannsbereder kostnad"
+          unit_of_measurement: "NOK"
+          unique_id: vvb_kostnad
+          icon: "mdi:cash-check"
+          state: >
+            {%set energy=0 %}
+            {%if states('sensor.varmtvannsbereder_energi_per_time') != 'unavailable'%}
+              {% set energy = states('sensor.varmtvannsbereder_energi_per_time') | float %}
+            {%endif%}
+            {{ (states('sensor.los_timepris_inkl_nettleie_nok_kwh') | float) * energy }}
+
+        - name: "Vaskemaskin kostnad"
+          unit_of_measurement: "NOK"
+          unique_id: vaskemaskin_kostnad
+          icon: "mdi:cash-check"
+          state: >
+            {%set energy=0 %}
+            {%if states('sensor.vaskemaskin_energi_per_time_2') != 'unavailable'%}
+              {% set energy = states('sensor.vaskemaskin_energi_per_time_2') | float %}
+            {%endif%}
+            {{ (states('sensor.los_timepris_inkl_nettleie_nok_kwh') | float) * energy }}
+        - name: "Tørketrommel kostnad"
+          unit_of_measurement: "NOK"
+          unique_id: torketrommel_kostnad
+          icon: "mdi:cash-check"
+          state: >
+            {%set energy=0 %}
+            {%if states('sensor.torketrommel_energi_per_time') != 'unavailable' %}
+              {% set energy = states('sensor.torketrommel_energi_per_time') | float %}
+            {%endif%}
+            {{ (states('sensor.los_timepris_inkl_nettleie_nok_kwh') | float) * energy }}
+
+
+        - name: "Temperatur yttergang"
+          icon: "mdi:thermometer"
+          unit_of_measurement: "C"
+          state: "{{ state_attr('climate.yttergang','current_temperature') | float }}"
+
+        - name: "Tørketrommel filtrert"
+          icon: "mdi:lightning-bolt"
+          unique_id: torketrommel_filtrert
+          unit_of_measurement: "W"
+          state: >
+            {% if states('sensor.shelly1pm_244cab433137_power') == 'unknown' %}
+            2
+            {% else %}
+            {{states('sensor.shelly1pm_244cab433137_power')}}
+            {% endif %}
+        - name: "Timer siden varmtvannsbereder ferdig"
+          icon: "mdi:water-boiler-alert"
+          unit_of_measurement: "hours"
+          state: >
+            {{((now() | as_timestamp) - (states('sensor.varmtvannsbereder_ferdigvarmet') | as_timestamp)) / 3600}}
+        - name: "Oppvaskmaskin Power"
+          icon: "mdi:lightning-bolt"
+          unit_of_measurement: "W"
+          state: >
+            {% if is_state('sensor.smartplugg_oppvaskmaskin_power', 'unknown') %}
+              unknown
+            {% else %}
+            {% set power = (states('sensor.smartplugg_oppvaskmaskin_power') | float) -10 %}
+            {% if power < 0 %}
+            {% set power = 0 %}
+            {% endif %}
+            {{ power }}
+            {% endif %}
+
+        - name: "Termometer Veranda"
+          icon: "mdi:sun-thermometer"
+          unit_of_measurement: "C"
+          state: >
+            {%  if states('sensor.utendorssensor_veranda_temperature')=='unknown' %}0{% else %}{{ states('sensor.utendorssensor_veranda_temperature')|float |round(1) }}{% endif %}
+
+        - name: "Unavailable Entities"
+          unique_id: unavailable_entities
+          icon: "{{ iif(states(this.entity_id)|int(0) > 0,'mdi:alert-circle','mdi:check-circle') }}"
+          unit_of_measurement: entities
+          state: >
+            {% set entities = state_attr(this.entity_id,'entity_id') %}
+            {% if entities != none %} {{ entities|count }} {% endif %}
+          attributes:
+            entity_id: >
+              {% set ignore_seconds = 240 %}
+              {% set ignored = state_attr('group.ignored_unavailable_entities','entity_id') %}
+              {% set ignore_ts = (now().timestamp() - ignore_seconds)|as_datetime %}
+              {% set entities = states|rejectattr('domain','eq','group')
+                  |rejectattr('last_changed','ge',ignore_ts)
+                  |selectattr('state','in',['unavailable','unknown']) %}
+              {% if ignored != none %}
+                {% set entities =  entities|rejectattr('entity_id','in',ignored) %}
+              {% endif %}
+              {{ entities|map(attribute='entity_id')|list }}

@@ -1,0 +1,22 @@
+'1664223733591':
+  alias: Pushvarsel søppeltømming
+  sequence:
+  - service: notify.mobile_app_iphone
+    data_template:
+      message: ' {% set rest = states(''sensor.avfallsor_mixed_ab2ad662_7a53_4453_bf5b_4bb0b932c3be'')
+        | float(0) %} {% set mat = states(''sensor.avfallsor_bio_ab2ad662_7a53_4453_bf5b_4bb0b932c3be'')
+        | float %} {% set papir = states(''sensor.avfallsor_paper_ab2ad662_7a53_4453_bf5b_4bb0b932c3be'')
+        | float %} {% set metall = states(''sensor.avfallsor_metal_ab2ad662_7a53_4453_bf5b_4bb0b932c3be'')
+        | float %}  I morgen tømmes følgende søppel: {% if rest < 7 %} Restavfall{%-
+        endif %} {% if mat < 7 %}, Matavfall{%- endif %}{% if papir < 7 %}, Papp&papir{%-
+        endif %} {% if metall < 7 %}, Glass&metall{%- endif %}'
+  - service: notify.mobile_app_lill_ann_sin_iphone
+    data_template:
+      message: ' {% set rest = states(''sensor.avfallsor_mixed_ab2ad662_7a53_4453_bf5b_4bb0b932c3be'')
+        | float(0) %} {% set mat = states(''sensor.avfallsor_bio_ab2ad662_7a53_4453_bf5b_4bb0b932c3be'')
+        | float %} {% set papir = states(''sensor.avfallsor_paper_ab2ad662_7a53_4453_bf5b_4bb0b932c3be'')
+        | float %} {% set metall = states(''sensor.avfallsor_metal_ab2ad662_7a53_4453_bf5b_4bb0b932c3be'')
+        | float %}  I morgen tømmes følgende søppel: {% if rest < 7 %} Restavfall{%-
+        endif %} {% if mat < 7 %}, Matavfall{%- endif %}{% if papir < 7 %}, Papp&papir{%-
+        endif %} {% if metall < 7 %}, Glass&metall{%- endif %}'
+    enabled: true

@@ -127,3 +127,20 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+#Homeassistant
+*.json
+*.JSON
+*.conf
+home-assistant_v2.*
+home-assistant.log*
+.cloud/
+.storage/
+backups/
+image/
+themes/
+custom_components/
+ui_lovelace_minimalist/
+tts/
+www/
+secrets.yaml

@@ -1,0 +1,223 @@
+
+# Loads default set of integrations. Do not remove.
+default_config:
+
+http:
+  ip_ban_enabled: true
+  login_attempts_threshold: 3
+  use_x_forwarded_for: true
+  trusted_proxies:
+    - 192.168.1.0/24  # Local Lan
+    - 172.10.0.0/24  # Docker network
+
+logger:
+  default: warn
+  # logs:
+  #   homeassistant.loader: debug
+  #   custom_components.electrolux_status: debug
+
+duckdns:
+  domain: !secret duckdns_domain
+  access_token: !secret duckdns_token
+
+prometheus:
+    filter:
+        include_domains:
+            - climate
+        include_entity_globs:
+            - sensor.rc_touch_*
+            - sensor.*_energy
+            - sensor.*_power
+            - sensor.*_temperature
+            - sensor.*_soverom*
+            - sensor.bad_*
+            - sensor.*gang*
+            - sensor.*_illuminance_lux
+            - sensor.nordpool*
+            - sensor.los_*
+            - light.*
+            - binary_sensor.*_contact
+            - sensor.filtered_powerusage_last_5_minutes
+
+# google_assistant:
+#   project_id: ha--home-integration-ee5ef
+#   service_account: !include SERVICE_ACCOUNT.JSON
+#   report_state: true
+#   exposed_domains:
+#     - switch
+#     - light
+#   entity_config:
+#     switch.kitchen:
+#       name: CUSTOM_NAME_FOR_GOOGLE_ASSISTANT
+#       aliases:
+#         - BRIGHT_LIGHTS
+#         - ENTRY_LIGHTS
+#     light.living_room:
+#       expose: false
+#       room: LIVING_ROOM
+
+# Example for HomeKit setup
+homekit:
+
+
+
+nordpool:
+
+sensor: !include sensor.yaml
+
+template: !include template.yaml
+
+utility_meter:
+  vvb_energi_per_time:
+    source: sensor.shellypro1pm_30c6f781b29c_energy
+    name: "Varmtvannsbereder energi per time"
+    cycle: hourly
+  vvb_kostnad_per_mnd:
+    source: sensor.varmtvannsbereder_kostnad
+    name: "Varmtvannsbereder kostnad per mnd"
+    cycle: monthly
+  vvb_kostnad_per_aar:
+    source: sensor.varmtvannsbereder_kostnad
+    name: "Varmtvannsbereder kostnad per år"
+    cycle: yearly
+
+  #Soverom 1
+  sov1_energi_per_time:
+    source: sensor.a_l_soverom_2
+    name: "Soverom 1 Energi per time"
+    cycle: hourly
+  soverom1_kostnad_per_mnd:
+    source: sensor.soverom_1_kostnad
+    name: "Soverom 1 kostnad per mnd"
+    cycle: monthly
+  soverom1_kostnad_per_aar:
+    source: sensor.soverom_1_kostnad
+    name: "Soverom 1 kostnad per år"
+    cycle: yearly
+
+  # Soverom 3
+  sov3_energi_per_time:
+    source: sensor.tobias_soverom_2
+    name: "Soverom 3 Energi per time"
+    cycle: hourly
+  soverom3_kostnad_per_mnd:
+    source: sensor.soverom_3_kostnad
+    name: "Soverom 3 kostnad per mnd"
+    cycle: monthly
+  soverom3_kostnad_per_aar:
+    source: sensor.soverom_3_kostnad
+    name: "Soverom 3 kostnad per år"
+    cycle: yearly
+  #Kjellergang varmekabler
+  kjellergang_energi_per_time:
+    source: sensor.gang_kjeller_2
+    name: "Kjellergang Energi per time"
+    cycle: hourly
+  kjellergang_kostnad_per_mnd:
+    source: sensor.kjellergang_kostnad
+    name: "Kjellergang kostnad per mnd"
+    cycle: monthly
+  kjellergang_kostnad_per_aar:
+    source: sensor.kjellergang_kostnad
+    name: "Kjellergang kostnad per år"
+    cycle: yearly
+  #Bad kjeller varmekabler
+  bad_kjeller_energi_per_time:
+    source: sensor.bad_kjeller_2
+    name: "Bad kjeller Energi per time"
+    cycle: hourly
+  bad_kjeller_kostnad_per_mnd:
+    source: sensor.bad_kjeller_kostnad
+    name: "Bad kjeller kostnad per mnd"
+    cycle: monthly
+  bad_kjeller_kostnad_per_aar:
+    source: sensor.bad_kjeller_kostnad
+    name: "Bad kjeller kostnad per år"
+    cycle: yearly
+
+  oppvaskmaskin_energi_per_time:
+    source: sensor.oppvaskmaskin
+    name: "Oppvaskmaskin energi per time"
+    cycle: hourly
+  oppvaskmaskin_kostnad_per_mnd:
+    source: sensor.oppvaskmaskin_kostnad
+    cycle: monthly
+  oppvaskmaskin_kostnad_per_aar:
+    source: sensor.oppvaskmaskin_kostnad
+    cycle: yearly
+
+  vvb_energi_per_time:
+    source: sensor.shellypro1pm_30c6f781b29c_energy
+    name: "Varmtvannsbereder energi per time"
+    cycle: hourly
+  vvb_kostnad_per_mnd:
+    source: sensor.varmtvannsbereder_kostnad_2
+    cycle: monthly
+  vvb_kostnad_per_aar:
+    source: sensor.varmtvannsbereder_kostnad_2
+    cycle: yearly
+
+  # vaskemaskin_energi_per_time:
+  #   name: "Vaskemaskin energi per time"
+  #   source: sensor.shelly_vaskerom_energy
+  #   cycle: hourly
+  vaskemaskin_kostnad_per_mnd:
+    name: "Vaskemaskin kostnad per mnd"
+    source: sensor.vaskemaskin_kostnad
+    cycle: monthly
+  vaskemaskin_kostnad_per_aar:
+    name: "Vaskemaskin kostnad per år"
+    source: sensor.vaskemaskin_kostnad
+    cycle: yearly
+
+  torketrommel_energi_per_time:
+    name: "Tørketrommel energi per time"
+    source: sensor.shelly1pm_244cab433137_energy
+    cycle: hourly
+  torketrommel_kostnad_per_mnd:
+    name: "Tørketrommel kostnad per mnd"
+    source: sensor.torketrommel_kostnad
+    cycle: monthly
+  torketrommel_kostnad_per_aar:
+    name: "Tørketrommel kostnad per år"
+    source: sensor.torketrommel_kostnad
+    cycle: yearly
+
+
+
+mqtt:
+  sensor:
+    - name: Zigbee2mqtt Networkmap
+      # if you change base_topic of Zigbee2mqtt, change state_topic accordingly
+      state_topic: zigbee2mqtt/bridge/response/networkmap
+      value_template: >-
+        {{ now().strftime('%Y-%m-%d %H:%M:%S') }}
+      # again, if you change base_topic of Zigbee2mqtt, change json_attributes_topic accordingly
+      json_attributes_topic: zigbee2mqtt/bridge/response/networkmap
+      json_attributes_template: "{{ value_json.data.value | tojson }}"
+
+
+webhook:
+
+ zigbee2mqtt_networkmap:
+   #topic: your topic (optional, default zigbee2mqtt)
+ panel_iframe:
+   networkmap:
+     title: 'Zigbee Map'
+     url: '/local/community/zigbee2mqtt_networkmap/map.html'
+     icon: 'mdi:graphql'
+
+tts:
+  - platform: google_cloud
+    key_file: googlecloud.json
+    voice: nb-NO-Standard-B
+    text_type: ssml
+    profiles:
+      - medium-bluetooth-speaker-class-device
+
+automation: !include automations.yaml
+script: !include scripts.yaml
+scene: !include scenes.yaml
+
+frontend:
+  themes: !include_dir_merge_named themes

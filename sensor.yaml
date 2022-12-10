@@ -1,0 +1,167 @@
+  # Husets totale energiscore
+  - platform: energyscore
+    name: Skinnerheia Energy score
+    unique_id: energyscore.skinnerheia
+    price_entity: sensor.los_timepris_inkl_nettleie_nok_kwh
+    energy_entity: sensor.accumulated_energy_per_hour
+
+  # Elbil-lader energiscore
+  - platform: energyscore
+    name: Elbil-lader Energy score
+    unique_id: energyscore.elbil
+    price_entity: sensor.los_timepris_inkl_nettleie_nok_kwh
+    energy_entity: sensor.ehzyxy7d_lifetime_energy
+
+  # VVB energiscore
+  - platform: energyscore
+    name: VVB Energy score
+    unique_id: energyscore.varmtvannsbereder
+    price_entity: sensor.los_timepris_inkl_nettleie_nok_kwh
+    energy_entity: sensor.shellypro1pm_30c6f781b29c_energy
+
+  # Bad kjeller energiscore
+  - platform: energyscore
+    name: Bad kjeller Energy score
+    unique_id: energyscore.bad_kjeller
+    price_entity: sensor.los_timepris_inkl_nettleie_nok_kwh
+    energy_entity: sensor.bad_kjeller_2
+
+  # Soverom 1 energiscore
+  - platform: energyscore
+    name: Soverom 1 Energy score
+    unique_id: energyscore.soverom_1
+    price_entity: sensor.los_timepris_inkl_nettleie_nok_kwh
+    energy_entity: sensor.a_l_soverom_2
+
+  - platform: nordpool
+
+    # Should the prices include vat? Default True
+    VAT: True
+
+    # What currency the api fetches the prices in
+    # this is only need if you want a sensor in a non local currency
+    currency: "NOK"
+
+    # Option to show prices in cents (or the equivalent in local currency)
+    price_in_cents: false
+
+    # Helper so you can set your "low" price
+    # low_price = hour_price < average * low_price_cutoff
+    low_price_cutoff: 0.95
+
+    # What power regions your are interested in.
+    # Possible values: "DK1", "DK2", "FI", "LT", "LV", "Oslo", "Kr.sand", "Bergen", "Molde", "Tr.heim", "Tromsø", "SE1", "SE2", "SE3","SE4", "SYS", "EE"
+    region: "Kr.sand"
+
+    # How many decimals to use in the display of the price
+    precision: 3
+
+    # What the price should be displayed in default
+    # Possible values: MWh, kWh and Wh
+    # default: kWh
+    price_type: kWh
+
+    # This option allows the usage of a template to add a tariff.
+    # now() always refers start of the hour of that price.
+    # this way we can calculate the correct costs add that to graphs etc.
+    # The price result of the additional_costs template expects this additional cost to be in kWh and not cents as a float
+    # default {{0.0|float}}
+    #additional_costs: '{% set s = {
+    #"hourly_fixed_cost": 0.5352,
+    #"winter_night": 0.265,
+    #"winter_day": 0.465,
+    #"summer_day": 0.284,
+    #"summer_night": 0.246,
+    #"cert": 0.01
+#}
+#%}
+#{% if now().month >= 5 and now().month <11 %}
+#    {% if now().hour >=6 and now().hour <23 %}
+#        {{s.summer_day+s.hourly_fixed_cost+s.cert|float}}
+#    {% else %}
+#        {{s.summer_night+s.hourly_fixed_cost+s.cert|float}}
+#    {% endif %}
+#{% else %}
+#    {% if now().hour >=6 and now().hour <23 %}
+#        {{s.winter_day+s.hourly_fixed_cost+s.cert|float}}
+#    {%else%}
+#        {{s.winter_night+s.hourly_fixed_cost+s.cert|float}}
+#    {% endif %}
+#{% endif %}'
+
+  - platform: statistics
+    name: "Utendørs temperatur minimum siste 8 timer"
+    entity_id: sensor.utendorssensor_veranda_temperature
+    state_characteristic: value_min
+    sampling_size: 20000
+    max_age:
+      hours: 8
+    precision: 1
+
+  - platform: statistics
+    name: "Power usage mean last 5 mnutes"
+    entity_id: sensor.0x086bd7fffeb6c404_power
+    state_characteristic: mean
+    max_age:
+      minutes: 5
+    sampling_size: 50
+    precision: 1
+
+    #Filter for AMS-måler for å få mindre målepunkter til graf-visning
+  - platform: filter
+    name: Filtered powerusage last 5 minutes
+    unique_id: sensor.filtered_powerusage_last_5_minutes
+    entity_id: sensor.0x086bd7fffeb6c404_power
+    filters:
+      - filter: time_simple_moving_average
+        window_size: "00:02"
+      - filter: throttle
+        window_size: 12
+      - filter: lowpass
+        time_constant: 5
+
+
+  #sensor.utendorssensor_veranda_illuminance_lux
+  - platform: filter
+    name: Utendørs lys
+    unique_id: sensor.utendorssensor_filtered_lux
+    entity_id: sensor.utendorssensor_veranda_illuminance_lux
+    filters:
+      # - filter: time_simple_moving_average
+      #   window_size: "00:20"
+      # - filter: throttle
+      #   window_size: 4
+      - filter: lowpass
+        time_constant: 7
+
+  #Tørketrommel.  Brukes til varsling
+  - platform: filter
+    name: Tørketrommel_outlier
+    unique_id: sensor.torketrommel_energy_outlier
+    entity_id: sensor.torketrommel_filtrert
+    filters:
+      - filter: outlier
+        window_size: 3
+        radius: 100
+
+  - platform: rest
+    name: Neste buss template
+    scan_interval: 400 # Litt under hvert 7de minutt
+    resource: https://api.entur.io/journey-planner/v3/graphql
+    method: POST
+    payload: "{\"query\": \"{trip(from:{name:\\\"Skinnerheia 25, 4534 Kristiansand\\\" place:\\\"NSR:StopPlace:25191\\\"}to:{place:\\\"NSR:StopPlace:21924\\\" name:\\\"KKG\\\"}numTripPatterns:1){tripPatterns{aimedStartTime}}}\"}"
+    json_attributes:
+        - trip
+    json_attributes_path: "$.data"
+    value_template: "Ok"
+    #value_template: '{{ value_json.data.trip.tripPatterns[0].aimedStartTime }}'
+    headers:
+      ET-Client-Name: "Erling Paulsen-HomeAssistant Integrasjon"
+      Content-Type: application/json
+      User-Agent: REST
+
+#   - platform: command_line
+#     command: "curl -k --silent -X --header 'Accept: application/xml' 'https://api.met.no/weatherapi/textforecast/2.0/landoverview'"
+#     name: "Værvarsel tekst daglig"
+#     value_template: "{{ regex_findall('<location name=\"Agder\" id=\"0502\">(?<varsel>[æøåÆØÅ\\w\\s\\.,]+)<\\/location>')(0)}}"
+#     scan_interval: 21600
