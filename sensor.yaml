@@ -145,6 +145,13 @@
         radius: 100
 
   - platform: rest
+    resource: https://stromstottekalkulator20221212092949.azurewebsites.net/api/stotte/NO2
+    name: Strømstøtte
+    unique_id: stromstotte_azure_func
+    scan_interval: 900 # Hvert kvarter, kun for å holde liv i Azure-instansen(free tier, så lastes ut ganske så aggressivt)
+    value_template: "{{ value_json.valueWithVAT | float | round(2) }}"
+
+  - platform: rest
     name: Neste buss template
     scan_interval: 400 # Litt under hvert 7de minutt
     resource: https://api.entur.io/journey-planner/v3/graphql
