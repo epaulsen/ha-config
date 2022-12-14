@@ -145,11 +145,18 @@
         radius: 100
 
   - platform: rest
-    resource: https://stromstottekalkulator20221212092949.azurewebsites.net/api/stotte/NO2
+    resource: https://stromstottekalkulator20221212092949.azurewebsites.net/api/stotte/area/NO2
+    # Gyldige verdier på slutten av resource er NO1,NO2,NO3,NO4 og NO5.
+    # Evt. Oslo,Kr.sand,Bergen,Tr.heim og Tromsø, fritt valg
     name: Strømstøtte
     unique_id: stromstotte_azure_func
-    scan_interval: 900 # Hvert kvarter, kun for å holde liv i Azure-instansen(free tier, så lastes ut ganske så aggressivt)
+    scan_interval: 900
+    # Scanner hvert kvarter, kun for å holde liv i Azure-instansen(free tier, så lastes ut ganske så aggressivt)
+    # Behøver egentlig bare å kjøre en gang i døgnet, verdien vil kun oppdatere seg senest en time etter at
+    # Nordpool har publisert morgendagens priser(Azure-funksjonen poller en gang i timen mot Nordpool).
+
     value_template: "{{ value_json.valueWithVAT | float | round(2) }}"
+    #For pris uten moms, bruk `value_json.value` på linja over
 
   - platform: rest
     name: Neste buss template
