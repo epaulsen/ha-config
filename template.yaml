@@ -33,17 +33,17 @@
           unit_of_measurement: "W"
           icon: "mdi:lightning-bolt-outline"
           state: >
-            {{states('sensor.ehzyxy7d_power') | float * 1000
-            + states('sensor.shellypro1pm_30c6f781b29c_power') | float
-            + states('sensor.a_l_soverom') | float
-            + states('sensor.bad_kjeller') | float
-            + states('sensor.e_og_l_a_soverom') | float
-            + states('sensor.gang_kjeller') | float
-            + states('sensor.tobias_soverom') | float
-            + states('sensor.m_h_soverom') | float
-            + states('sensor.oppvaskmaskin_power') | float
-            + states('sensor.shelly_vaskerom_power') | float
-            + states('sensor.shelly1pm_244cab433137_power') | float
+            {{states('sensor.ehzyxy7d_power') | float(0) * 1000
+            + states('sensor.shellypro1pm_30c6f781b29c_power') | float(0)
+            + states('sensor.a_l_soverom') | float(0)
+            + states('sensor.bad_kjeller') | float(0)
+            + states('sensor.e_og_l_a_soverom') | float(0)
+            + states('sensor.gang_kjeller') | float(0)
+            + states('sensor.tobias_soverom') | float(0)
+            + states('sensor.m_h_soverom') | float(0)
+            + states('sensor.oppvaskmaskin_power') | float(0)
+            + states('sensor.shelly_vaskerom_power') | float(0)
+            + states('sensor.shelly1pm_244cab433137_power') | float(0)
             }}
 
         # Utregning av faktisk timepris, basert på nordpool spot
@@ -99,7 +99,7 @@
           state: >
             {%set energy=0 %}
             {%if states('sensor.ehzyxy7d_energy_per_hour') != 'unavailable'%}
-              {% set energy = states('sensor.ehzyxy7d_energy_per_hour') | float %}
+              {% set energy = states('sensor.ehzyxy7d_energy_per_hour') | float(0) %}
             {%endif%}
             {{ (states('sensor.los_timepris_inkl_nettleie_nok_kwh') | float) * energy }}
 
@@ -111,7 +111,7 @@
           state: >
             {%set energy=0 %}
             {%if states('sensor.vvb_energi_per_time') != 'unavailable'%}
-              {% set energy = states('sensor.vvb_energi_per_time') | float %}
+              {% set energy = states('sensor.vvb_energi_per_time') | float(0) %}
             {%endif%}
             {{ (states('sensor.los_timepris_inkl_nettleie_nok_kwh') | float) * energy }}
 
@@ -122,7 +122,7 @@
           state: >
             {%set energy=0 %}
             {%if states('sensor.soverom_1_energi_per_time') != 'unavailable'%}
-              {% set energy = states('sensor.soverom_1_energi_per_time') | float %}
+              {% set energy = states('sensor.soverom_1_energi_per_time') | float(0) %}
             {%endif%}
             {{ (states('sensor.los_timepris_inkl_nettleie_nok_kwh') | float) * energy }}
         - name: "Soverom 3 kostnad"
@@ -132,7 +132,7 @@
           state: >
             {%set energy=0 %}
             {%if states('sensor.soverom_3_energi_per_time') != 'unavailable'%}
-              {% set energy = states('sensor.soverom_3_energi_per_time') | float %}
+              {% set energy = states('sensor.soverom_3_energi_per_time') | float(0) %}
             {%endif%}
             {{ (states('sensor.los_timepris_inkl_nettleie_nok_kwh') | float) * energy }}
         - name: "Kjellergang kostnad"
@@ -142,7 +142,7 @@
           state: >
             {%set energy=0 %}
             {%if states('sensor.kjellergang_energi_per_time') != 'unavailable'%}
-              {% set energy = states('sensor.kjellergang_energi_per_time') | float %}
+              {% set energy = states('sensor.kjellergang_energi_per_time') | float(0) %}
             {%endif%}
             {{ (states('sensor.los_timepris_inkl_nettleie_nok_kwh') | float) * energy }}
         - name: "Bad kjeller kostnad"
@@ -152,7 +152,7 @@
           state: >
             {%set energy=0 %}
             {%if states('sensor.bad_kjeller_energi_per_time') != 'unavailable'%}
-              {% set energy = states('sensor.bad_kjeller_energi_per_time') | float %}
+              {% set energy = states('sensor.bad_kjeller_energi_per_time') | float(0) %}
             {%endif%}
             {{ (states('sensor.los_timepris_inkl_nettleie_nok_kwh') | float) * energy }}
         - name: "Oppvaskmaskin kostnad"
@@ -162,7 +162,7 @@
           state: >
             {%set energy=0 %}
             {%if states('sensor.oppvaskmaskin_energi_per_time') != 'unavailable' %}
-              {% set energy = states('sensor.oppvaskmaskin_energi_per_time') | float %}
+              {% set energy = states('sensor.oppvaskmaskin_energi_per_time') | float(0) %}
             {%endif%}
             {{ (states('sensor.los_timepris_inkl_nettleie_nok_kwh') | float) * energy }}
         - name: "Varmtvannsbereder kostnad"
@@ -172,7 +172,7 @@
           state: >
             {%set energy=0 %}
             {%if states('sensor.varmtvannsbereder_energi_per_time') != 'unavailable'%}
-              {% set energy = states('sensor.varmtvannsbereder_energi_per_time') | float %}
+              {% set energy = states('sensor.varmtvannsbereder_energi_per_time') | float(0) %}
             {%endif%}
             {{ (states('sensor.los_timepris_inkl_nettleie_nok_kwh') | float) * energy }}
 
@@ -183,7 +183,7 @@
           state: >
             {%set energy=0 %}
             {%if states('sensor.vaskemaskin_energi_per_time_2') != 'unavailable'%}
-              {% set energy = states('sensor.vaskemaskin_energi_per_time_2') | float %}
+              {% set energy = states('sensor.vaskemaskin_energi_per_time_2') | float(0) %}
             {%endif%}
             {{ (states('sensor.los_timepris_inkl_nettleie_nok_kwh') | float) * energy }}
         - name: "Tørketrommel kostnad"
@@ -193,7 +193,7 @@
           state: >
             {%set energy=0 %}
             {%if states('sensor.torketrommel_energi_per_time') != 'unavailable' %}
-              {% set energy = states('sensor.torketrommel_energi_per_time') | float %}
+              {% set energy = states('sensor.torketrommel_energi_per_time') | float(0) %}
             {%endif%}
             {{ (states('sensor.los_timepris_inkl_nettleie_nok_kwh') | float) * energy }}
 
@@ -201,7 +201,7 @@
         - name: "Temperatur yttergang"
           icon: "mdi:thermometer"
           unit_of_measurement: "C"
-          state: "{{ state_attr('climate.yttergang','current_temperature') | float }}"
+          state: "{{ state_attr('climate.yttergang','current_temperature') | float(0) }}"
 
         - name: "Tørketrommel filtrert"
           icon: "mdi:lightning-bolt"

@@ -10,6 +10,9 @@ http:
     - 192.168.1.0/24  # Local Lan
     - 172.10.0.0/24  # Docker network
 
+shell_command:
+  ha_start: curl http://192.168.1.226:1880/endpoint/ha_start
+
 logger:
   default: warn
   # logs:
@@ -144,17 +147,6 @@ utility_meter:
     cycle: monthly
   oppvaskmaskin_kostnad_per_aar:
     source: sensor.oppvaskmaskin_kostnad
-    cycle: yearly
-
-  vvb_energi_per_time:
-    source: sensor.shellypro1pm_30c6f781b29c_energy
-    name: "Varmtvannsbereder energi per time"
-    cycle: hourly
-  vvb_kostnad_per_mnd:
-    source: sensor.varmtvannsbereder_kostnad_2
-    cycle: monthly
-  vvb_kostnad_per_aar:
-    source: sensor.varmtvannsbereder_kostnad_2
     cycle: yearly
 
   # vaskemaskin_energi_per_time:
