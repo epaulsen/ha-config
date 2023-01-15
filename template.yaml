@@ -46,34 +46,32 @@
             + states('sensor.shelly1pm_244cab433137_power') | float(0)
             }}
 
+        # Nettleie for Agder Energi er på 52,51 øre på dagtid, og 42,51 øre på natt.
+        - name: "Nettleie kostnad"
+          unit_of_measurement: "NOK/kWh"
+          icon: mdi:currency-usd
+          state: >
+            {% if now().hour >=6 and now().hour < 23 %}
+                0.3865
+            {%else%}
+                0.2665
+            {% endif %}
+
         # Utregning av faktisk timepris, basert på nordpool spot
         # LOS COOP avtale har spot + påslag av 3,45 øre/kWh
-        # I tillegg så er nettleie på 52,51 øre på dagtid, og 42,51 øre på natt.
-        # TODO: Oppdater template en gang etter nyttår, fjern gammel nettleie
+
+        - name: "LOS timepris NOK/kWh"
+          unit_of_measurement: "NOK/kWh"
+          icon: mdi:currency-usd
+          state: >
+            {% set cost = 0.0345 %}
+            {{ (states('sensor.nordpool_kwh_krsand_nok_3_095_025') | float) + (cost | float) }}
+
         - name: "LOS timepris inkl nettleie NOK/kWh"
           unit_of_measurement: "NOK/kWh"
           icon: mdi:currency-usd
           state: >
-            {% set s = {
-                "nettleie_natt": 0.5251,
-                "nettleie_dag": 0.4251,
-                "paaslag": 0.0345
-            }%}
-
-            {%if now().year > 2022%}
-            {% set s = {
-                "nettleie_natt": 0.3865,
-                "nettleie_dag": 0.2665,
-                "paaslag": 0.0345
-            }%}
-            {%endif%}
-
-            {% if now().hour >=6 and now().hour < 23 %}
-                {% set cost = s.nettleie_dag + s.paaslag |float %}
-            {%else%}
-                {% set cost = s.nettleie_natt + s.paaslag |float %}
-            {% endif %}
-            {{ (states('sensor.nordpool_kwh_krsand_nok_3_095_025') | float) + (cost | float) }}
+            {{ (states('sensor.los_timepris_nok_kwh') | float) + (states('sensor.nettleie_kostnad') | float) }}
 
         - name: "Elbil ladetid"
           unique_id: "elbil_ladetid_hours"
@@ -217,7 +215,11 @@
           icon: "mdi:water-boiler-alert"
           unit_of_measurement: "hours"
           state: >
+            {%if states('sensor.varmtvannsbereder_ferdigvarmet') == 'unknown'%}
+            unknown
+            {%else%}
             {{((now() | as_timestamp) - (states('sensor.varmtvannsbereder_ferdigvarmet') | as_timestamp)) / 3600}}
+            {%endif%}
         - name: "Oppvaskmaskin Power"
           icon: "mdi:lightning-bolt"
           unit_of_measurement: "W"
