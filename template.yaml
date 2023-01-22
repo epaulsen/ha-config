@@ -201,12 +201,16 @@
           unit_of_measurement: "C"
           state: "{{ state_attr('climate.yttergang','current_temperature') | float(0) }}"
 
+        # Skyggesensor for tørketrommel
+        # Dersom state er unavailable eller unknown, sett denne til 2W
+        # Dette for å unngå å trigge varsling om at tørketrommel er ferdig
+        # hvis Shelly-sensoren finner på å reboote(noe den gjør ofte)
         - name: "Tørketrommel filtrert"
           icon: "mdi:lightning-bolt"
           unique_id: torketrommel_filtrert
           unit_of_measurement: "W"
           state: >
-            {% if states('sensor.shelly1pm_244cab433137_power') == 'unknown' %}
+            {% if states('sensor.shelly1pm_244cab433137_power') == 'unknown' or states('sensor.shelly1pm_244cab433137_power') == 'unavailable'  %}
             2
             {% else %}
             {{states('sensor.shelly1pm_244cab433137_power')}}

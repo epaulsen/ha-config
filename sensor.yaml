@@ -33,10 +33,10 @@
     price_entity: sensor.los_timepris_inkl_nettleie_nok_kwh
     energy_entity: sensor.a_l_soverom_2
 
-  - platform: grid_energy_tariff_monitor
+  - platform: energytariff
     entity_id: sensor.0x086bd7fffeb6c404_power
     precision: 2
-    max_effect: 15900
+    max_power: 15900
     levels:
       - name: "Trinn 1: 0-2 kWh"
         threshold: 2
