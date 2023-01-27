@@ -219,13 +219,13 @@
           icon: "mdi:water-boiler-alert"
           unit_of_measurement: "hours"
           state: >
-            {%if states('sensor.varmtvannsbereder_ferdigvarmet') == 'unknown'%}
+            {%if states('input_datetime.varmtvannsbereder_sist_ferdig') == 'unknown'%}
             unknown
             {%else%}
-            {%if states('sensor.varmtvannsbereder_ferdigvarmet') == 'unavailable'%}
+            {%if states('input_datetime.varmtvannsbereder_sist_ferdig') == 'unavailable'%}
             unavailable
             {%else%}
-            {{((now() | as_timestamp) - (states('sensor.varmtvannsbereder_ferdigvarmet') | as_timestamp)) / 3600}}
+            {{((now() | as_timestamp) - (states('input_datetime.varmtvannsbereder_sist_ferdig') | as_timestamp -3600)) / 3600}}
             {%endif%}
             {%endif%}
         - name: "Oppvaskmaskin Power"
