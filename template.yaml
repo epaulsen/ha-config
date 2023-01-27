@@ -222,7 +222,11 @@
             {%if states('sensor.varmtvannsbereder_ferdigvarmet') == 'unknown'%}
             unknown
             {%else%}
+            {%if states('sensor.varmtvannsbereder_ferdigvarmet') == 'unavailable'%}
+            unavailable
+            {%else%}
             {{((now() | as_timestamp) - (states('sensor.varmtvannsbereder_ferdigvarmet') | as_timestamp)) / 3600}}
+            {%endif%}
             {%endif%}
         - name: "Oppvaskmaskin Power"
           icon: "mdi:lightning-bolt"
