@@ -24,19 +24,20 @@
     name: Bad kjeller Energy score
     unique_id: energyscore.bad_kjeller
     price_entity: sensor.los_timepris_inkl_nettleie_nok_kwh
-    energy_entity: sensor.bad_kjeller_2
+    energy_entity: sensor.bad_kjeller_power
 
   # Soverom 1 energiscore
   - platform: energyscore
     name: Soverom 1 Energy score
     unique_id: energyscore.soverom_1
     price_entity: sensor.los_timepris_inkl_nettleie_nok_kwh
-    energy_entity: sensor.a_l_soverom_2
+    energy_entity: sensor.a_l_soverom_power
 
   - platform: energytariff
     entity_id: sensor.0x086bd7fffeb6c404_power
     precision: 2
     max_power: 15900
+    target_energy: 10
     levels:
       - name: "Trinn 1: 0-2 kWh"
         threshold: 2
@@ -137,35 +138,35 @@
         window_size: 3
         radius: 100
 
-  - platform: rest
-    resource: https://stromstottekalkulator20221212092949.azurewebsites.net/api/stotte/area/NO2
-    # Gyldige verdier på slutten av resource er NO1,NO2,NO3,NO4 og NO5.
-    # Evt. Oslo,Kr.sand,Bergen,Tr.heim og Tromsø, fritt valg
-    name: Strømstøtte
-    unique_id: stromstotte_azure_func
-    scan_interval: 900
-    # Scanner hvert kvarter, kun for å holde liv i Azure-instansen(free tier, så lastes ut ganske så aggressivt)
-    # Behøver egentlig bare å kjøre en gang i døgnet, verdien vil kun oppdatere seg senest en time etter at
-    # Nordpool har publisert morgendagens priser(Azure-funksjonen poller en gang i timen mot Nordpool).
+  # - platform: rest
+  #   resource: https://stromstottekalkulator20221212092949.azurewebsites.net/api/stotte/area/NO2
+  #   # Gyldige verdier på slutten av resource er NO1,NO2,NO3,NO4 og NO5.
+  #   # Evt. Oslo,Kr.sand,Bergen,Tr.heim og Tromsø, fritt valg
+  #   name: Strømstøtte
+  #   unique_id: stromstotte_azure_func
+  #   scan_interval: 900
+  #   # Scanner hvert kvarter, kun for å holde liv i Azure-instansen(free tier, så lastes ut ganske så aggressivt)
+  #   # Behøver egentlig bare å kjøre en gang i døgnet, verdien vil kun oppdatere seg senest en time etter at
+  #   # Nordpool har publisert morgendagens priser(Azure-funksjonen poller en gang i timen mot Nordpool).
 
-    value_template: "{{ value_json.valueWithVAT | float | round(2) }}"
-    #For pris uten moms, bruk `value_json.value` på linja over
+  #   value_template: "{{ value_json.valueWithVAT | float | round(2) }}"
+  #   #For pris uten moms, bruk `value_json.value` på linja over
 
-  - platform: rest
-    name: Neste buss template
-    scan_interval: 400 # Litt under hvert 7de minutt
-    resource: https://api.entur.io/journey-planner/v3/graphql
-    method: POST
-    payload: "{\"query\": \"{trip(from:{name:\\\"Skinnerheia 25, 4534 Kristiansand\\\" place:\\\"NSR:StopPlace:25191\\\"}to:{place:\\\"NSR:StopPlace:21924\\\" name:\\\"KKG\\\"}numTripPatterns:1){tripPatterns{aimedStartTime}}}\"}"
-    json_attributes:
-        - trip
-    json_attributes_path: "$.data"
-    value_template: "Ok"
-    #value_template: '{{ value_json.data.trip.tripPatterns[0].aimedStartTime }}'
-    headers:
-      ET-Client-Name: "Erling Paulsen-HomeAssistant Integrasjon"
-      Content-Type: application/json
-      User-Agent: REST
+  # - platform: rest
+  #   name: Neste buss template
+  #   scan_interval: 400 # Litt under hvert 7de minutt
+  #   resource: https://api.entur.io/journey-planner/v3/graphql
+  #   method: POST
+  #   payload: "{\"query\": \"{trip(from:{name:\\\"Skinnerheia 25, 4534 Kristiansand\\\" place:\\\"NSR:StopPlace:25191\\\"}to:{place:\\\"NSR:StopPlace:21924\\\" name:\\\"KKG\\\"}numTripPatterns:1){tripPatterns{aimedStartTime}}}\"}"
+  #   json_attributes:
+  #       - trip
+  #   json_attributes_path: "$.data"
+  #   value_template: "Ok"
+  #   #value_template: '{{ value_json.data.trip.tripPatterns[0].aimedStartTime }}'
+  #   headers:
+  #     ET-Client-Name: "Erling Paulsen-HomeAssistant Integrasjon"
+  #     Content-Type: application/json
+  #     User-Agent: REST
 
 #   - platform: command_line
 #     command: "curl -k --silent -X --header 'Accept: application/xml' 'https://api.met.no/weatherapi/textforecast/2.0/landoverview'"
