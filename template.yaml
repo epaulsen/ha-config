@@ -1,4 +1,17 @@
     - sensor:
+        - name: "Lyssensor dag natt skumring"
+          unique_id: "lyssensor_dag_natt"
+          icon: mdi:sun-clock
+          state: >
+            {% set lux=(states('sensor.utendors_lys') | float(0))%}
+            {% if lux < 10 %}
+            NATT
+            {%elif lux < 300 %}
+            SKUMRING
+            {%else%}
+            DAG
+            {%endif%}
+
         - name: "Søppeltømming i morgen"
           unique_id: "soppeltomming_i_morgen"
           icon: mdi:trash-can
@@ -28,23 +41,37 @@
 
         # Sum av alt målt strømforbruk
         # Husk å oppdatere denne når nye enheter legges til.
-        - name: "Sum av alt forbruk"
+        - name: "Sum av alt målt forbruk"
           unique_id: sum_measured_consumption_w
           unit_of_measurement: "W"
           icon: "mdi:lightning-bolt-outline"
           state: >
             {{states('sensor.ehzyxy7d_power') | float(0) * 1000
             + states('sensor.shellypro1pm_30c6f781b29c_power') | float(0)
-            + states('sensor.a_l_soverom') | float(0)
-            + states('sensor.bad_kjeller') | float(0)
-            + states('sensor.e_og_l_a_soverom') | float(0)
-            + states('sensor.gang_kjeller') | float(0)
-            + states('sensor.tobias_soverom') | float(0)
-            + states('sensor.m_h_soverom') | float(0)
+            + states('sensor.a_l_soverom_power') | float(0)
+            + states('sensor.e_og_l_a_soverom_power') | float(0)
+            + states('sensor.bad_kjeller_power') | float(0)
+            + states('sensor.gang_kjeller_power') | float(0)
+            + states('sensor.tobias_soverom_power') | float(0)
+            + states('sensor.m_h_soverom_power') | float(0)
             + states('sensor.oppvaskmaskin_power') | float(0)
             + states('sensor.shelly_vaskerom_power') | float(0)
             + states('sensor.shelly1pm_244cab433137_power') | float(0)
             }}
+
+        # Sum av alt umålt strømforbruk
+
+        - name: "Sum av alt umålt forbruk"
+          unique_id: sum_unmeasured_consumption_w
+          unit_of_measurement: "W"
+          icon: "mdi:lightning-bolt-outline"
+          state: >
+            {% set power= (states('sensor.0x086bd7fffeb6c404_power') | float(0)) - (states('sensor.sum_av_alt_forbruk') | float(0))  %}
+            {%if power > 0%}
+            {{power}}
+            {%else%}
+            0
+            {%endif%}
 
         # Nettleie for Agder Energi er på 52,51 øre på dagtid, og 42,51 øre på natt.
         - name: "Nettleie kostnad"
