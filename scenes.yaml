@@ -288,7 +288,7 @@
       supported_color_modes:
       - brightness
       color_mode: brightness
-      brightness: 26
+      brightness: 46
       linkquality: 255
       power_on_behavior:
       friendly_name: Dimmer kjøkken
@@ -304,12 +304,12 @@
       - stop_effect
       supported_color_modes:
       - brightness
-      color_mode: brightness
-      brightness: 26
       linkquality: 255
       power_on_behavior:
       friendly_name: Dimmer Gang Oppe
       supported_features: 44
+      color_mode: brightness
+      brightness: 66
       state: 'on'
     light.0x04cd15fffe0baf20:
       effect_list:
@@ -322,7 +322,7 @@
       supported_color_modes:
       - brightness
       color_mode: brightness
-      brightness: 26
+      brightness: 46
       linkquality: 255
       power_on_behavior:
       friendly_name: Benkelys kjøkken
@@ -332,9 +332,26 @@
       supported_color_modes:
       - brightness
       color_mode: brightness
-      brightness: 56
+      brightness: 51
       friendly_name: Lys yttergang
       supported_features: 1
+      state: 'on'
+    light.dimmer_stue:
+      effect_list:
+      - blink
+      - breathe
+      - okay
+      - channel_change
+      - finish_effect
+      - stop_effect
+      supported_color_modes:
+      - brightness
+      color_mode: brightness
+      brightness: 79
+      linkquality: 255
+      power_on_behavior:
+      friendly_name: Dimmer stue
+      supported_features: 44
       state: 'on'
   metadata:
     light.0x588e81fffe5b6db4:
@@ -344,6 +361,8 @@
     light.0x04cd15fffe0baf20:
       entity_only: true
     light.lys_yttergang:
+      entity_only: true
+    light.dimmer_stue:
       entity_only: true
 - id: '1678642726232'
   name: Autolys NATT
@@ -375,12 +394,12 @@
       - stop_effect
       supported_color_modes:
       - brightness
-      color_mode: brightness
-      brightness: 51
       linkquality: 255
       power_on_behavior:
       friendly_name: Dimmer Gang Oppe
       supported_features: 44
+      color_mode: brightness
+      brightness: 102
       state: 'on'
     light.dimmer_stue:
       effect_list:
@@ -410,7 +429,7 @@
       supported_color_modes:
       - brightness
       color_mode: brightness
-      brightness: 51
+      brightness: 92
       linkquality: 255
       power_on_behavior:
       friendly_name: Dimmer kjøkken
@@ -420,7 +439,7 @@
       supported_color_modes:
       - brightness
       color_mode: brightness
-      brightness: 51
+      brightness: 92
       friendly_name: Lys yttergang
       supported_features: 1
       state: 'on'

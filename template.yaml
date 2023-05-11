@@ -4,7 +4,7 @@
           icon: mdi:sun-clock
           state: >
             {% set lux=(states('sensor.utendors_lys') | float(0))%}
-            {% if lux < 10 %}
+            {% if lux < 50 %}
             NATT
             {%elif lux < 300 %}
             SKUMRING
