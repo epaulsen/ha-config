@@ -42,27 +42,7 @@ prometheus:
             - binary_sensor.*_contact
             - sensor.filtered_powerusage_last_5_minutes
 
-# google_assistant:
-#   project_id: ha--home-integration-ee5ef
-#   service_account: !include SERVICE_ACCOUNT.JSON
-#   report_state: true
-#   exposed_domains:
-#     - switch
-#     - light
-#   entity_config:
-#     switch.kitchen:
-#       name: CUSTOM_NAME_FOR_GOOGLE_ASSISTANT
-#       aliases:
-#         - BRIGHT_LIGHTS
-#         - ENTRY_LIGHTS
-#     light.living_room:
-#       expose: false
-#       room: LIVING_ROOM
-
-# Example for HomeKit setup
 homekit:
-
-
 
 nordpool:
 
