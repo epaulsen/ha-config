@@ -378,7 +378,7 @@
       supported_color_modes:
       - brightness
       color_mode: brightness
-      brightness: 51
+      brightness: 102
       linkquality: 255
       power_on_behavior:
       friendly_name: Benkelys kjøkken
@@ -394,12 +394,12 @@
       - stop_effect
       supported_color_modes:
       - brightness
+      color_mode: brightness
+      brightness: 102
       linkquality: 255
       power_on_behavior:
       friendly_name: Dimmer Gang Oppe
       supported_features: 44
-      color_mode: brightness
-      brightness: 102
       state: 'on'
     light.dimmer_stue:
       effect_list:
@@ -413,7 +413,7 @@
       - brightness
       color_mode: brightness
       brightness: 89
-      linkquality: 255
+      linkquality: 252
       power_on_behavior:
       friendly_name: Dimmer stue
       supported_features: 44
@@ -429,7 +429,7 @@
       supported_color_modes:
       - brightness
       color_mode: brightness
-      brightness: 92
+      brightness: 102
       linkquality: 255
       power_on_behavior:
       friendly_name: Dimmer kjøkken

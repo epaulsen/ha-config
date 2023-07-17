@@ -75,7 +75,7 @@ webhook:
 tts:
   - platform: google_cloud
     key_file: googlecloud.json
-    voice: nb-NO-Standard-B
+    voice: nb-NO-Wavenet-B
     text_type: ssml
     profiles:
       - medium-bluetooth-speaker-class-device

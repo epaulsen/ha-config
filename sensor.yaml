@@ -33,6 +33,13 @@
     price_entity: sensor.los_timepris_inkl_nettleie_nok_kwh
     energy_entity: sensor.a_l_soverom_power
 
+  - platform: statistics
+    name: "Oppvaskmaskin power gjennomsnitt"
+    entity_id: sensor.oppvaskmaskin_filtrert
+    state_characteristic: mean
+    max_age:
+      minutes: 20
+
   - platform: energytariff
     entity_id: sensor.0x086bd7fffeb6c404_power
     precision: 2

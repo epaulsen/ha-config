@@ -73,15 +73,15 @@
             0
             {%endif%}
 
-        # Nettleie for Agder Energi er på 52,51 øre på dagtid, og 42,51 øre på natt.
+        # Nettleie for Å Energi er på 47 øre på dagtid, og 35 øre på natt.
         - name: "Nettleie kostnad"
           unit_of_measurement: "NOK/kWh"
           icon: mdi:currency-usd
           state: >
             {% if now().hour >=6 and now().hour < 23 %}
-                0.3865
+                0.47
             {%else%}
-                0.2665
+                0.35
             {% endif %}
 
         # Utregning av faktisk timepris, basert på nordpool spot
@@ -242,6 +242,22 @@
             {% else %}
             {{states('sensor.shelly1pm_244cab433137_power')}}
             {% endif %}
+
+        # Denne eksisterer utelukkende pga. idiotisk Eva Smartplugg, som rapporterer 0-2 watt uavhengig av om oppvaskmaskin
+        # er på eller ikke.  I tillegg så har oppvaskmaskin en negativ spike på -32768 W av og til, tyder på korrupt firmware.
+        - name: "Oppvaskmaskin filtrert"
+          icon: "mdi:lightning-bolt"
+          unique_id: oppvaskmaskin_filtrert
+          unit_of_measurement: "W"
+          state: >
+            {% if states('sensor.oppvaskmaskin_power') == 'unknown' %} 
+              0
+            {% elif states('sensor.oppvaskmaskin_power') | float < 5 %}
+              0
+            {% else %}
+              {{ states('sensor.oppvaskmaskin_power') }}
+            {% endif %}
+
         - name: "Timer siden varmtvannsbereder ferdig"
           icon: "mdi:water-boiler-alert"
           unit_of_measurement: "hours"
