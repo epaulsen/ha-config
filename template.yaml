@@ -91,15 +91,21 @@
           unique_id: sensor.timepris_ink_stotte
           icon: mdi:currency-usd
           state: >
+            {#Gjelder fra 1. september 2023.  Returner spotpris hvis før 1. september #}
             {% if now().month < 9 and now().year == 2023 %}
             {{states('sensor.nordpool_kwh_krsand_nok_3_095_025')}}
             {%else%}
+            {#Ny strømstøtteordning.#}
+            {#Pris minus moms#}
             {% set pris = states('sensor.nordpool_kwh_krsand_nok_3_095_025') | float(0) / 1.25 %}
             {% if pris < 0.7 %}
-            {{pris * 1.25}}
+            {#Pris er under 70 øre, returner spotpris ink moms. #}
+            {{(pris * 1.25) | round(3)}}
             {% else %}
-            {%set stotte=(pris - 0.7) * 0.9 %}
-            {{(0.7 + stotte) * 1.25 }}
+            {#Pris er over 70 øre.  #}
+            {#Pris blir 70 øre + 10% av alt over det#}
+            {%set stotte = (pris - 0.7) * 0.1 %}
+            {{((0.7 + stotte) * 1.25) | round(3)}}
             {%endif%}
             {%endif%}
 
