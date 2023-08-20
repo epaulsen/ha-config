@@ -117,16 +117,53 @@
       - filter: time_simple_moving_average
         window_size: "00:03"
       - filter: throttle
-        window_size: 10
-      # - filter: lowpass
-      #   time_constant: 5
-
+        window_size: 10      
 
   #sensor.utendorssensor_veranda_illuminance_lux
   - platform: filter
     name: Utendørs lys
     unique_id: sensor.utendorssensor_filtered_lux
     entity_id: sensor.utendorssensor_veranda_illuminance_lux
+    filters:      
+      - filter: lowpass
+        time_constant: 7
+
+  # Filtrert luxmåling gang oppe
+  - platform: filter
+    name: Lysstyrke gang oppe
+    unique_id: sensor.gang_yttergang_lux
+    entity_id: sensor.bevegelse_gang_oppe_illuminance_lux
+    filters:      
+      - filter: lowpass
+        time_constant: 7
+
+  # Filtrert luxmåling yttergang
+  - platform: filter
+    name: Lysstyrke yttergang
+    unique_id: sensor.yttergang_lux
+    entity_id: sensor.bevegelse_yttergang_illuminance_lux
+    filters:      
+      - filter: lowpass
+        time_constant: 7
+
+  # Filtrert luxmåling trapp
+  - platform: filter
+    name: Lysstyrke trapp
+    unique_id: sensor.trapp_lux
+    entity_id: sensor.bevegelse_trapp_illuminance_lux
+    filters:
+      # - filter: time_simple_moving_average
+      #   window_size: "00:20"
+      # - filter: throttle
+      #   window_size: 4
+      - filter: lowpass
+        time_constant: 7
+
+  # Filtrert luxmåling kjøkken
+  - platform: filter
+    name: Lysstyrke kjøkken
+    unique_id: sensor.kjokken_lux
+    entity_id: sensor.bevegelse_kjokken_illuminance_lux
     filters:
       # - filter: time_simple_moving_average
       #   window_size: "00:20"

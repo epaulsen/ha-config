@@ -2,6 +2,11 @@
 # Loads default set of integrations. Do not remove.
 default_config:
 
+homeassistant:
+  allowlist_external_dirs:    
+    - "/media"
+    - "/tmp"
+
 http:
   ip_ban_enabled: true
   login_attempts_threshold: 3
@@ -51,26 +56,26 @@ sensor: !include sensor.yaml
 template: !include template.yaml
 
 mqtt:
-  sensor:
-    - name: Zigbee2mqtt Networkmap
-      # if you change base_topic of Zigbee2mqtt, change state_topic accordingly
-      state_topic: zigbee2mqtt/bridge/response/networkmap
-      value_template: >-
-        {{ now().strftime('%Y-%m-%d %H:%M:%S') }}
-      # again, if you change base_topic of Zigbee2mqtt, change json_attributes_topic accordingly
-      json_attributes_topic: zigbee2mqtt/bridge/response/networkmap
-      json_attributes_template: "{{ value_json.data.value | tojson }}"
+  # sensor:
+  #   - name: Zigbee2mqtt Networkmap
+  #     # if you change base_topic of Zigbee2mqtt, change state_topic accordingly
+  #     state_topic: zigbee2mqtt/bridge/response/networkmap
+  #     value_template: >-
+  #       {{ now().strftime('%Y-%m-%d %H:%M:%S') }}
+  #     # again, if you change base_topic of Zigbee2mqtt, change json_attributes_topic accordingly
+  #     json_attributes_topic: zigbee2mqtt/bridge/response/networkmap
+  #     json_attributes_template: "{{ value_json.data.value | tojson }}"
 
 
-webhook:
+#webhook:
 
- zigbee2mqtt_networkmap:
-   #topic: your topic (optional, default zigbee2mqtt)
- panel_iframe:
-   networkmap:
-     title: 'Zigbee Map'
-     url: '/local/community/zigbee2mqtt_networkmap/map.html'
-     icon: 'mdi:graphql'
+#  zigbee2mqtt_networkmap:
+#    #topic: your topic (optional, default zigbee2mqtt)
+#  panel_iframe:
+#    networkmap:
+#      title: 'Zigbee Map'
+#      url: '/local/community/zigbee2mqtt_networkmap/map.html'
+#      icon: 'mdi:graphql'
 
 tts:
   - platform: google_cloud

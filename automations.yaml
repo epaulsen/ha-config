@@ -9,3 +9,10 @@
   - service: shell_command.ha_start
     data: {}
   mode: single
+- id: '1691497590953'
+  alias: Nordpool - Reload Integration
+  description: Nødvendig for å få inn timeverdier, dessverre...
+  use_blueprint:
+    path: erlendsellie/nordpool_reload.yaml
+    input:
+      entity: sensor.nordpool_kwh_krsand_nok_3_095_025

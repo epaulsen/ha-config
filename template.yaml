@@ -84,15 +84,33 @@
                 0.35
             {% endif %}
 
+        # Utregning av spotpris fra og med 1. september 2023
+        # Da får man 90% i støtte for alt over 70 øre(eks mva)
+        - name: "Timepris ink støtte"
+          unit_of_measurement: "NOK/kWh"
+          unique_id: sensor.timepris_ink_stotte
+          icon: mdi:currency-usd
+          state: >
+            {% if now().month < 9 and now().year == 2023 %}
+            {{states('sensor.nordpool_kwh_krsand_nok_3_095_025')}}
+            {%else%}
+            {% set pris = states('sensor.nordpool_kwh_krsand_nok_3_095_025') | float(0) / 1.25 %}
+            {% if pris < 0.7 %}
+            {{pris * 1.25}}
+            {% else %}
+            {%set stotte=(pris - 0.7) * 0.9 %}
+            {{(0.7 + stotte) * 1.25 }}
+            {%endif%}
+            {%endif%}
+
         # Utregning av faktisk timepris, basert på nordpool spot
         # LOS COOP avtale har spot + påslag av 3,45 øre/kWh
-
         - name: "LOS timepris NOK/kWh"
           unit_of_measurement: "NOK/kWh"
           icon: mdi:currency-usd
           state: >
             {% set cost = 0.0345 %}
-            {{ (states('sensor.nordpool_kwh_krsand_nok_3_095_025') | float) + (cost | float) }}
+            {{ (states('sensor.timepris_ink_stotte') | float) + (cost | float) }}
 
         - name: "LOS timepris inkl nettleie NOK/kWh"
           unit_of_measurement: "NOK/kWh"
@@ -276,7 +294,7 @@
           unit_of_measurement: "W"
           state: >
             {% if is_state('sensor.smartplugg_oppvaskmaskin_power', 'unknown') %}
-              unknown
+              0
             {% else %}
             {% set power = (states('sensor.smartplugg_oppvaskmaskin_power') | float) -10 %}
             {% if power < 0 %}
@@ -285,28 +303,85 @@
             {{ power }}
             {% endif %}
 
+        - name: "Bad oppe VK power"
+          icon: "mdi:lightning-bolt"
+          unique_id: sensor.bad_oppe_vk_power
+          unit_of_measurement: "W"
+          state: >
+            {% set naa = now().hour %}
+            {% set volt = states('sensor.0x086bd7fffeb6c404_voltage') | float(0) %}
+            {% set effekt = volt * volt / 375 %}
+            {% if state_attr('climate.termostat_bad_oppe','running_state') == 'heat' %}
+            {{effekt}}
+            {%else%}
+            0
+            {%endif%}
+
+        #hvac_action: heating <-- PÅ
+        #running_state: idle
+        #running_state: heat
+
         - name: "Termometer Veranda"
           icon: "mdi:sun-thermometer"
           unit_of_measurement: "C"
           state: >
             {%  if states('sensor.utendorssensor_veranda_temperature')=='unknown' %}0{% else %}{{ states('sensor.utendorssensor_veranda_temperature')|float |round(1) }}{% endif %}
 
-        - name: "Unavailable Entities"
-          unique_id: unavailable_entities
-          icon: "{{ iif(states(this.entity_id)|int(0) > 0,'mdi:alert-circle','mdi:check-circle') }}"
-          unit_of_measurement: entities
+        - name: "Kjøkken lys status"
+          unique_id: sensor.kjokken_lys_status
           state: >
-            {% set entities = state_attr(this.entity_id,'entity_id') %}
-            {% if entities != none %} {{ entities|count }} {% endif %}
-          attributes:
-            entity_id: >
-              {% set ignore_seconds = 240 %}
-              {% set ignored = state_attr('group.ignored_unavailable_entities','entity_id') %}
-              {% set ignore_ts = (now().timestamp() - ignore_seconds)|as_datetime %}
-              {% set entities = states|rejectattr('domain','eq','group')
-                  |rejectattr('last_changed','ge',ignore_ts)
-                  |selectattr('state','in',['unavailable','unknown']) %}
-              {% if ignored != none %}
-                {% set entities =  entities|rejectattr('entity_id','in',ignored) %}
-              {% endif %}
-              {{ entities|map(attribute='entity_id')|list }}
+            {% if states('sensor.lys_gang_oppe_3') | float(0) > 100 %}
+            {%set status = "AV" %}
+            {% elif states('sensor.lys_gang_oppe_3') | float(0) > 60 %}
+            {%set status = "BENK" %}
+            {% else %}
+            {%set status = "BEGGE" %}
+            {%endif%}
+            {{status}}
+          
+        - name: "Gang oppe lys status"
+          state: >
+            {% if states('sensor.lys_gang_oppe') | float(0) > 60 %}
+            {%set status = "AV" %}
+            {% else %}
+            {%set status = "PÅ" %}
+            {%endif%}
+            {{status}}        
+
+        - name: "Trapp lys status"
+          state: >
+            {% if states('sensor.lys_gang_oppe_2') | float(0) > 300 %}
+            {%set status = "AV" %}
+            {% else %}
+            {%set status = "PÅ" %}
+            {%endif%}
+            {{status}}
+
+        - name: "Yttergang lys status"
+          state: >
+            {% if states('sensor.lysstyrke_yttergang') | float(0) > 60 %}
+            {%set status = "AV" %}
+            {% else %}
+            {%set status = "PÅ" %}
+            {%endif%}
+            {{status}}
+            
+        # - name: "Unavailable Entities"
+        #   unique_id: unavailable_entities
+        #   icon: "{{ iif(states(this.entity_id)|int(0) > 0,'mdi:alert-circle','mdi:check-circle') }}"
+        #   unit_of_measurement: entities
+        #   state: >
+        #     {% set entities = state_attr(this.entity_id,'entity_id') %}
+        #     {% if entities != none %} {{ entities|count }} {% endif %}
+        #   attributes:
+        #     entity_id: >
+        #       {% set ignore_seconds = 240 %}
+        #       {% set ignored = state_attr('group.ignored_unavailable_entities','entity_id') %}
+        #       {% set ignore_ts = (now().timestamp() - ignore_seconds)|as_datetime %}
+        #       {% set entities = states|rejectattr('domain','eq','group')
+        #           |rejectattr('last_changed','ge',ignore_ts)
+        #           |selectattr('state','in',['unavailable','unknown']) %}
+        #       {% if ignored != none %}
+        #         {% set entities =  entities|rejectattr('entity_id','in',ignored) %}
+        #       {% endif %}
+        #       {{ entities|map(attribute='entity_id')|list }}

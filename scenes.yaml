@@ -289,27 +289,11 @@
       - brightness
       color_mode: brightness
       brightness: 46
+      last_seen: '2023-07-30T22:25:56+02:00'
       linkquality: 255
       power_on_behavior:
       friendly_name: Dimmer kjøkken
       supported_features: 44
-      state: 'on'
-    light.dimmer_gang_oppe:
-      effect_list:
-      - blink
-      - breathe
-      - okay
-      - channel_change
-      - finish_effect
-      - stop_effect
-      supported_color_modes:
-      - brightness
-      linkquality: 255
-      power_on_behavior:
-      friendly_name: Dimmer Gang Oppe
-      supported_features: 44
-      color_mode: brightness
-      brightness: 66
       state: 'on'
     light.0x04cd15fffe0baf20:
       effect_list:
@@ -323,18 +307,11 @@
       - brightness
       color_mode: brightness
       brightness: 46
+      last_seen: '2023-07-30T22:27:08+02:00'
       linkquality: 255
       power_on_behavior:
       friendly_name: Benkelys kjøkken
       supported_features: 44
-      state: 'on'
-    light.lys_yttergang:
-      supported_color_modes:
-      - brightness
-      color_mode: brightness
-      brightness: 51
-      friendly_name: Lys yttergang
-      supported_features: 1
       state: 'on'
     light.dimmer_stue:
       effect_list:
@@ -348,6 +325,7 @@
       - brightness
       color_mode: brightness
       brightness: 79
+      last_seen: '2023-07-30T22:28:04+02:00'
       linkquality: 255
       power_on_behavior:
       friendly_name: Dimmer stue
@@ -356,11 +334,7 @@
   metadata:
     light.0x588e81fffe5b6db4:
       entity_only: true
-    light.dimmer_gang_oppe:
-      entity_only: true
     light.0x04cd15fffe0baf20:
-      entity_only: true
-    light.lys_yttergang:
       entity_only: true
     light.dimmer_stue:
       entity_only: true
