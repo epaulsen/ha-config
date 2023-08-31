@@ -40,13 +40,13 @@
           state: "{{ state_attr('climate.gang_kjeller','current_temperature') | float }}"
 
         # Sum av alt målt strømforbruk
-        # Husk å oppdatere denne når nye enheter legges til.
+        # Husk å oppdatere denne når nye enheter legges til.  Fast forbruk på 70W er nettverk og Glumserver
         - name: "Sum av alt målt forbruk"
           unique_id: sum_measured_consumption_w
           unit_of_measurement: "W"
           icon: "mdi:lightning-bolt-outline"
           state: >
-            {{states('sensor.ehzyxy7d_power') | float(0) * 1000
+            {{(states('sensor.ehzyxy7d_power') | float(0) * 1000
             + states('sensor.shellypro1pm_30c6f781b29c_power') | float(0)
             + states('sensor.a_l_soverom_power') | float(0)
             + states('sensor.e_og_l_a_soverom_power') | float(0)
@@ -57,6 +57,9 @@
             + states('sensor.oppvaskmaskin_power') | float(0)
             + states('sensor.shelly_vaskerom_power') | float(0)
             + states('sensor.shelly1pm_244cab433137_power') | float(0)
+            + states('sensor.bad_oppe_vk_power') | float(0)
+            + 70
+            )| round(0)
             }}
 
         # Sum av alt umålt strømforbruk
@@ -93,20 +96,22 @@
           state: >
             {#Gjelder fra 1. september 2023.  Returner spotpris hvis før 1. september #}
             {% if now().month < 9 and now().year == 2023 %}
-            {{states('sensor.nordpool_kwh_krsand_nok_3_095_025')}}
+              {{states('sensor.nordpool_kwh_krsand_nok_3_095_025')}}
             {%else%}
-            {#Ny strømstøtteordning.#}
-            {#Pris minus moms#}
-            {% set pris = states('sensor.nordpool_kwh_krsand_nok_3_095_025') | float(0) / 1.25 %}
-            {% if pris < 0.7 %}
-            {#Pris er under 70 øre, returner spotpris ink moms. #}
-            {{(pris * 1.25) | round(3)}}
-            {% else %}
-            {#Pris er over 70 øre.  #}
-            {#Pris blir 70 øre + 10% av alt over det#}
-            {%set stotte = (pris - 0.7) * 0.1 %}
-            {{((0.7 + stotte) * 1.25) | round(3)}}
-            {%endif%}
+              {#Ny strømstøtteordning.#}
+              {#Pris minus moms#}
+              {% set pris = states('sensor.nordpool_kwh_krsand_nok_3_095_025') | float(0) / 1.25 %}
+              {% if pris < 0.7 %}
+                {#Pris er under 70 øre, returner spotpris ink moms. #}
+                {{(pris * 1.25) | round(3)}}
+              {% else %}
+                {% if pris < 0.7 %}
+                  {{pris * 1.25}}
+                {% else %}
+                  {%set ti_pst_over_70_ore = (pris - 0.7) * 0.1 %}
+                  {{ ((0.7 + ti_pst_over_70_ore) * 1.25) | round(2) }}
+                {%endif%}
+              {%endif%}
             {%endif%}
 
         # Utregning av faktisk timepris, basert på nordpool spot
