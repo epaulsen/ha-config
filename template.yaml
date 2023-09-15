@@ -76,65 +76,14 @@
             0
             {%endif%}
 
-        # Nettleie for Å Energi er på 47 øre på dagtid, og 35 øre på natt.
-        - name: "Nettleie kostnad"
-          unit_of_measurement: "NOK/kWh"
-          icon: mdi:currency-usd
-          state: >
-            {% if now().hour >=6 and now().hour < 23 %}
-                0.47
-            {%else%}
-                0.35
-            {% endif %}
-
-        # Utregning av spotpris fra og med 1. september 2023
-        # Da får man 90% i støtte for alt over 70 øre(eks mva)
-        - name: "Timepris ink støtte"
-          unit_of_measurement: "NOK/kWh"
-          unique_id: sensor.timepris_ink_stotte
-          icon: mdi:currency-usd
-          state: >
-            {#Gjelder fra 1. september 2023.  Returner spotpris hvis før 1. september #}
-            {% if now().month < 9 and now().year == 2023 %}
-              {{states('sensor.nordpool_kwh_krsand_nok_3_095_025')}}
-            {%else%}
-              {#Ny strømstøtteordning.#}
-              {#Pris minus moms#}
-              {% set pris = states('sensor.nordpool_kwh_krsand_nok_3_095_025') | float(0) / 1.25 %}
-              {% if pris < 0.7 %}
-                {#Pris er under 70 øre, returner spotpris ink moms. #}
-                {{(pris * 1.25) | round(3)}}
-              {% else %}
-                {% if pris < 0.7 %}
-                  {{pris * 1.25}}
-                {% else %}
-                  {%set ti_pst_over_70_ore = (pris - 0.7) * 0.1 %}
-                  {{ ((0.7 + ti_pst_over_70_ore) * 1.25) | round(2) }}
-                {%endif%}
-              {%endif%}
-            {%endif%}
-
-        # Utregning av faktisk timepris, basert på nordpool spot
-        # LOS COOP avtale har spot + påslag av 3,45 øre/kWh
-        - name: "LOS timepris NOK/kWh"
-          unit_of_measurement: "NOK/kWh"
-          icon: mdi:currency-usd
-          state: >
-            {% set cost = 0.0345 %}
-            {{ (states('sensor.timepris_ink_stotte') | float) + (cost | float) }}
-
-        - name: "LOS timepris inkl nettleie NOK/kWh"
-          unit_of_measurement: "NOK/kWh"
-          icon: mdi:currency-usd
-          state: >
-            {{ (states('sensor.los_timepris_nok_kwh') | float) + (states('sensor.nettleie_kostnad') | float) }}
-
         - name: "Elbil ladetid"
           unique_id: "elbil_ladetid_hours"
           state: >
             {% set battery = states('input_number.elbil_batteristorrelse') | float %}
             {% set speed = states('input_number.elbil_lader_hastighet') | float %}
-            {{((1 - (states('input_select.elbil_soc') | float) / 100) * battery * 1000 / speed) | round(method='ceil')}}
+            {% set ladeprosent = (100 - (states('sensor.e_golf_soc') | float(0)))/100%}
+            {% set ant_Wh = (battery * ladeprosent) * 1000 %}
+            {{ (ant_Wh / speed) | round(2) }}
 
 
         - name: "Elbil kabel tilkobled"
@@ -145,112 +94,20 @@
             {%else%}
             on
             {%endif%}
+        
+        - name: "E-Golf kostnad per mil"
+          unique_id: "sensor.e_golf_kostnad_per_mil"
+          unit_of_measurement: "NOK/mil"
+          icon: "mdi:cash-check"
+          state: >
+            {{(((states('sensor.easee_ladekostnad_mnd') | float(0))/(states('sensor.e_golf_kjorelengde_per_maned')) | float(0))*10) | round(2)}}
 
-        # Regn ut kostnad for elbil basert på utility meter for Easee laderobot
-        - name: "Elbil ladekostnad"
-          unit_of_measurement: "NOK"
+        - name: "E-Golf kWh/mil"
+          unique_id: "sensor.e_golf_kwh_per_mil"
+          unit_of_measurement: "NOK/mil"
           icon: "mdi:cash-check"
           state: >
-            {%set energy=0 %}
-            {%if states('sensor.ehzyxy7d_energy_per_hour') != 'unavailable'%}
-              {% set energy = states('sensor.ehzyxy7d_energy_per_hour') | float(0) %}
-            {%endif%}
-            {{ (states('sensor.los_timepris_inkl_nettleie_nok_kwh') | float) * energy }}
-
-        # Regn ut kostnad per målt entitet
-        - name: "Varmtvannsbereder kostnad"
-          unit_of_measurement: "NOK"
-          unique_id: varmtvannsbereder_kostnad
-          icon: "mdi:cash-check"
-          state: >
-            {%set energy=0 %}
-            {%if states('sensor.vvb_energi_per_time') != 'unavailable'%}
-              {% set energy = states('sensor.vvb_energi_per_time') | float(0) %}
-            {%endif%}
-            {{ (states('sensor.los_timepris_inkl_nettleie_nok_kwh') | float) * energy }}
-
-        - name: "Soverom 1 kostnad"
-          unit_of_measurement: "NOK"
-          unique_id: soverom1_kostnad
-          icon: "mdi:cash-check"
-          state: >
-            {%set energy=0 %}
-            {%if states('sensor.soverom_1_energi_per_time') != 'unavailable'%}
-              {% set energy = states('sensor.soverom_1_energi_per_time') | float(0) %}
-            {%endif%}
-            {{ (states('sensor.los_timepris_inkl_nettleie_nok_kwh') | float) * energy }}
-        - name: "Soverom 3 kostnad"
-          unit_of_measurement: "NOK"
-          unique_id: soverom3_kostnad
-          icon: "mdi:cash-check"
-          state: >
-            {%set energy=0 %}
-            {%if states('sensor.soverom_3_energi_per_time') != 'unavailable'%}
-              {% set energy = states('sensor.soverom_3_energi_per_time') | float(0) %}
-            {%endif%}
-            {{ (states('sensor.los_timepris_inkl_nettleie_nok_kwh') | float) * energy }}
-        - name: "Kjellergang kostnad"
-          unit_of_measurement: "NOK"
-          unique_id: kjellergang_kostnad
-          icon: "mdi:cash-check"
-          state: >
-            {%set energy=0 %}
-            {%if states('sensor.kjellergang_energi_per_time') != 'unavailable'%}
-              {% set energy = states('sensor.kjellergang_energi_per_time') | float(0) %}
-            {%endif%}
-            {{ (states('sensor.los_timepris_inkl_nettleie_nok_kwh') | float) * energy }}
-        - name: "Bad kjeller kostnad"
-          unit_of_measurement: "NOK"
-          unique_id: bad_kjeller_kostnad
-          icon: "mdi:cash-check"
-          state: >
-            {%set energy=0 %}
-            {%if states('sensor.bad_kjeller_energi_per_time') != 'unavailable'%}
-              {% set energy = states('sensor.bad_kjeller_energi_per_time') | float(0) %}
-            {%endif%}
-            {{ (states('sensor.los_timepris_inkl_nettleie_nok_kwh') | float) * energy }}
-        - name: "Oppvaskmaskin kostnad"
-          unit_of_measurement: "NOK"
-          unique_id: oppvaskmaskin_kostnad
-          icon: "mdi:cash-check"
-          state: >
-            {%set energy=0 %}
-            {%if states('sensor.oppvaskmaskin_energi_per_time') != 'unavailable' %}
-              {% set energy = states('sensor.oppvaskmaskin_energi_per_time') | float(0) %}
-            {%endif%}
-            {{ (states('sensor.los_timepris_inkl_nettleie_nok_kwh') | float) * energy }}
-        - name: "Varmtvannsbereder kostnad"
-          unit_of_measurement: "NOK"
-          unique_id: vvb_kostnad
-          icon: "mdi:cash-check"
-          state: >
-            {%set energy=0 %}
-            {%if states('sensor.varmtvannsbereder_energi_per_time') != 'unavailable'%}
-              {% set energy = states('sensor.varmtvannsbereder_energi_per_time') | float(0) %}
-            {%endif%}
-            {{ (states('sensor.los_timepris_inkl_nettleie_nok_kwh') | float) * energy }}
-
-        - name: "Vaskemaskin kostnad"
-          unit_of_measurement: "NOK"
-          unique_id: vaskemaskin_kostnad
-          icon: "mdi:cash-check"
-          state: >
-            {%set energy=0 %}
-            {%if states('sensor.vaskemaskin_energi_per_time_2') != 'unavailable'%}
-              {% set energy = states('sensor.vaskemaskin_energi_per_time_2') | float(0) %}
-            {%endif%}
-            {{ (states('sensor.los_timepris_inkl_nettleie_nok_kwh') | float) * energy }}
-        - name: "Tørketrommel kostnad"
-          unit_of_measurement: "NOK"
-          unique_id: torketrommel_kostnad
-          icon: "mdi:cash-check"
-          state: >
-            {%set energy=0 %}
-            {%if states('sensor.torketrommel_energi_per_time') != 'unavailable' %}
-              {% set energy = states('sensor.torketrommel_energi_per_time') | float(0) %}
-            {%endif%}
-            {{ (states('sensor.los_timepris_inkl_nettleie_nok_kwh') | float) * energy }}
-
+            {{(((states('sensor.easee_ladekostnad_mnd') | float(0))/(states('sensor.e_golf_kjorelengde_per_maned')) | float(0))*10) | round(2)}}
 
         - name: "Temperatur yttergang"
           icon: "mdi:thermometer"

@@ -63,32 +63,25 @@
         price: 800
 
   - platform: nordpool
-
-    # Should the prices include vat? Default True
     VAT: True
-
-    # What currency the api fetches the prices in
-    # this is only need if you want a sensor in a non local currency
     currency: "NOK"
-
-    # Option to show prices in cents (or the equivalent in local currency)
     price_in_cents: false
-
-    # Helper so you can set your "low" price
-    # low_price = hour_price < average * low_price_cutoff
     low_price_cutoff: 0.95
-
-    # What power regions your are interested in.
-    # Possible values: "DK1", "DK2", "FI", "LT", "LV", "Oslo", "Kr.sand", "Bergen", "Molde", "Tr.heim", "Tromsø", "SE1", "SE2", "SE3","SE4", "SYS", "EE"
     region: "Kr.sand"
-
-    # How many decimals to use in the display of the price
     precision: 3
-
-    # What the price should be displayed in default
-    # Possible values: MWh, kWh and Wh
-    # default: kWh
     price_type: kWh
+    additional_costs: >
+      {% set add_cost = 0%}
+      {% if current_price > 0.875 %}
+      {% set add_cost = 0.9 * (current_price - 0.875) * -1 %}
+      {%endif%}
+      {% set add_cost = add_cost + 0.0345 %}
+      {%if now().hour >=6 and now().hour < 23 %}
+      {% set add_cost = add_cost + 0.47 %}
+      {%else%}
+      {% set add_cost = add_cost + 0.35 %}
+      {%endif%}
+      {{add_cost | float(3) }}
 
   - platform: statistics
     name: "Utendørs temperatur minimum siste 8 timer"
@@ -181,6 +174,91 @@
       - filter: outlier
         window_size: 3
         radius: 100
+
+
+######################
+# Kostnadssensorer
+
+  - platform: cost
+    name: "E-Golf ladekostnad per måned"
+    source: sensor.easee_used_energy
+    tariff: sensor.nordpool_kwh_krsand_nok_3_095_025
+    unit_of_measurement: "kr"
+    cron: monthly
+  - platform: cost
+    name: "E-Golf kostnad per år"
+    source: sensor.easee_used_energy
+    tariff: sensor.nordpool_kwh_krsand_nok_3_095_025
+    unit_of_measurement: "kr"
+    cron: yearly
+
+  - platform: cost
+    name: "Varmtvannsbereder kostnad per år"
+    source: sensor.shellypro1pm_30c6f781b29c_energy
+    tariff: sensor.nordpool_kwh_krsand_nok_3_095_025
+    unit_of_measurement: "kr"
+    cron: yearly
+  - platform: cost
+    name: "Varmtvannsbereder kostnad per måned"
+    source: sensor.shellypro1pm_30c6f781b29c_energy
+    tariff: sensor.nordpool_kwh_krsand_nok_3_095_025
+    unit_of_measurement: "kr"
+    cron: monthly
+
+
+  - platform: cost
+    name: "Oppvaskmaskin kostnad per år"
+    source: sensor.oppvaskmaskin
+    tariff: sensor.nordpool_kwh_krsand_nok_3_095_025
+    unit_of_measurement: "kr"
+    cron: yearly
+  - platform: cost
+    name: "Oppvaskmaskin kostnad per måned"
+    source: sensor.oppvaskmaskin
+    tariff: sensor.nordpool_kwh_krsand_nok_3_095_025
+    unit_of_measurement: "kr"
+    cron: monthly
+
+  - platform: cost
+    name: "Vaskemaskin kostnad per år"
+    source: sensor.shelly_vaskerom_energy
+    tariff: sensor.nordpool_kwh_krsand_nok_3_095_025
+    unit_of_measurement: "kr"
+    cron: yearly
+  - platform: cost
+    name: "Vaskemaskin kostnad per måned"
+    source: sensor.shelly_vaskerom_energy
+    tariff: sensor.nordpool_kwh_krsand_nok_3_095_025
+    unit_of_measurement: "kr"
+    cron: monthly
+
+  - platform: cost
+    name: "Tørketrommel kostnad per år"
+    source: sensor.shelly1pm_244cab433137_energy
+    tariff: sensor.nordpool_kwh_krsand_nok_3_095_025
+    unit_of_measurement: "kr"
+    cron: yearly
+  - platform: cost
+    name: "Tørketrommel kostnad per måned"
+    source: sensor.shelly1pm_244cab433137_energy
+    tariff: sensor.nordpool_kwh_krsand_nok_3_095_025
+    unit_of_measurement: "kr"
+    cron: monthly
+
+  - platform: cost
+    name: "Umålt forbruk kostnad per år"
+    source: sensor.totalt_umalt_forbruk
+    tariff: sensor.nordpool_kwh_krsand_nok_3_095_025
+    unit_of_measurement: "kr"
+    cron: yearly
+  - platform: cost
+    name: "Umålt forbruk kostnad per måned"
+    source: sensor.totalt_umalt_forbruk
+    tariff: sensor.nordpool_kwh_krsand_nok_3_095_025
+    unit_of_measurement: "kr"
+    cron: monthly
+
+    
 
   # - platform: rest
   #   resource: https://stromstottekalkulator20221212092949.azurewebsites.net/api/stotte/area/NO2
