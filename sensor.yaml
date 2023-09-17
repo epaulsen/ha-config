@@ -2,35 +2,35 @@
   - platform: energyscore
     name: Skinnerheia Energy score
     unique_id: energyscore.skinnerheia
-    price_entity: sensor.los_timepris_inkl_nettleie_nok_kwh
+    price_entity: sensor.nordpool_kwh_krsand_nok_3_095_025
     energy_entity: sensor.accumulated_energy_per_hour
 
   # Elbil-lader energiscore
   - platform: energyscore
     name: Elbil-lader Energy score
     unique_id: energyscore.elbil
-    price_entity: sensor.los_timepris_inkl_nettleie_nok_kwh
+    price_entity: sensor.nordpool_kwh_krsand_nok_3_095_025
     energy_entity: sensor.ehzyxy7d_lifetime_energy
 
   # VVB energiscore
   - platform: energyscore
     name: VVB Energy score
     unique_id: energyscore.varmtvannsbereder
-    price_entity: sensor.los_timepris_inkl_nettleie_nok_kwh
+    price_entity: sensor.nordpool_kwh_krsand_nok_3_095_025
     energy_entity: sensor.shellypro1pm_30c6f781b29c_energy
 
   # Bad kjeller energiscore
   - platform: energyscore
     name: Bad kjeller Energy score
     unique_id: energyscore.bad_kjeller
-    price_entity: sensor.los_timepris_inkl_nettleie_nok_kwh
+    price_entity: sensor.nordpool_kwh_krsand_nok_3_095_025
     energy_entity: sensor.bad_kjeller_power
 
   # Soverom 1 energiscore
   - platform: energyscore
     name: Soverom 1 Energy score
     unique_id: energyscore.soverom_1
-    price_entity: sensor.los_timepris_inkl_nettleie_nok_kwh
+    price_entity: sensor.nordpool_kwh_krsand_nok_3_095_025
     energy_entity: sensor.a_l_soverom_power
 
   - platform: statistics
@@ -71,15 +71,21 @@
     precision: 3
     price_type: kWh
     additional_costs: >
+      {% set s = {
+        "paaslag": 0.0345,
+        "nettleie_natt": 0.35,
+        "nettleie_dag": 0.47
+      }
+      %}
       {% set add_cost = 0%}
       {% if current_price > 0.875 %}
       {% set add_cost = 0.9 * (current_price - 0.875) * -1 %}
       {%endif%}
-      {% set add_cost = add_cost + 0.0345 %}
+      {% set add_cost = add_cost + s.paaslag %}
       {%if now().hour >=6 and now().hour < 23 %}
-      {% set add_cost = add_cost + 0.47 %}
+      {% set add_cost = add_cost + s.nettleie_dag %}
       {%else%}
-      {% set add_cost = add_cost + 0.35 %}
+      {% set add_cost = add_cost + s.nettleie_natt %}
       {%endif%}
       {{add_cost | float(3) }}
 
