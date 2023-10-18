@@ -36,8 +36,17 @@
 
         - name: "Temperatur kjellergang"
           icon: "mdi:thermometer"
-          unit_of_measurement: "C"
+          unit_of_measurement: "°C"
           state: "{{ state_attr('climate.gang_kjeller','current_temperature') | float }}"
+
+        - name: "Duggpunkt bad oppe"
+          icon: "mdi:thermometer"
+          unit_of_measurement: "°C"
+          state: >
+            {%set fuktighet = states('sensor.temperatur_bad_oppe_humidity') | float(0) %}
+            {%set temp = states('sensor.temperatur_bad_oppe_temperature') | float(0) %}
+            {%set x = (log(fuktighet/100) + (17.625 * temp)) / (243.04 + temp)%}
+            {{ ((243.04 * x) / (17.625 - x)) | round(2)}}
 
         # Sum av alt målt strømforbruk
         # Husk å oppdatere denne når nye enheter legges til.  Fast forbruk på 70W er nettverk og Glumserver
@@ -52,6 +61,7 @@
             + states('sensor.e_og_l_a_soverom_power') | float(0)
             + states('sensor.bad_kjeller_power') | float(0)
             + states('sensor.gang_kjeller_power') | float(0)
+            + states('sensor.yttergang_power') | float(0)            
             + states('sensor.tobias_soverom_power') | float(0)
             + states('sensor.m_h_soverom_power') | float(0)
             + states('sensor.oppvaskmaskin_power') | float(0)
@@ -94,7 +104,13 @@
             {%else%}
             on
             {%endif%}
-        
+
+        - name: "E-Golf gjenværende kilometer forsikring"
+          unique_id: "sensor.e_golf_gjenvarende_forsikring"
+          unit_of_measurement: "km"
+          state: >
+            {{states('input_number.forsikring_kjorelengde') | float(0) - (states('sensor.e_golf_kilometerstand') | float(0))}}
+            
         - name: "E-Golf kostnad per mil"
           unique_id: "sensor.e_golf_kostnad_per_mil"
           unit_of_measurement: "NOK/mil"

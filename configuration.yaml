@@ -21,31 +21,11 @@ shell_command:
 logger:
   default: warn
   # logs:
-  #   homeassistant.loader: debug
-  #   custom_components.electrolux_status: debug
-
+  #   components.august: debug
+    
 duckdns:
   domain: !secret duckdns_domain
   access_token: !secret duckdns_token
-
-prometheus:
-    filter:
-        include_domains:
-            - climate
-        include_entity_globs:
-            - sensor.rc_touch_*
-            - sensor.*_energy
-            - sensor.*_power
-            - sensor.*_temperature
-            - sensor.*_soverom*
-            - sensor.bad_*
-            - sensor.*gang*
-            - sensor.*_illuminance_lux
-            - sensor.nordpool*
-            - sensor.los_*
-            - light.*
-            - binary_sensor.*_contact
-            - sensor.filtered_powerusage_last_5_minutes
 
 homekit:
 
