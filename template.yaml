@@ -104,7 +104,7 @@
             {%else%}
             on
             {%endif%}
-
+      
         - name: "E-Golf gjenværende kilometer forsikring"
           unique_id: "sensor.e_golf_gjenvarende_forsikring"
           unit_of_measurement: "km"
@@ -113,13 +113,6 @@
             
         - name: "E-Golf kostnad per mil"
           unique_id: "sensor.e_golf_kostnad_per_mil"
-          unit_of_measurement: "NOK/mil"
-          icon: "mdi:cash-check"
-          state: >
-            {{(((states('sensor.easee_ladekostnad_mnd') | float(0))/(states('sensor.e_golf_kjorelengde_per_maned')) | float(0))*10) | round(2)}}
-
-        - name: "E-Golf kWh/mil"
-          unique_id: "sensor.e_golf_kwh_per_mil"
           unit_of_measurement: "NOK/mil"
           icon: "mdi:cash-check"
           state: >

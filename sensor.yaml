@@ -1,38 +1,3 @@
-  # Husets totale energiscore
-  - platform: energyscore
-    name: Skinnerheia Energy score
-    unique_id: energyscore.skinnerheia
-    price_entity: sensor.nordpool_kwh_krsand_nok_3_095_025
-    energy_entity: sensor.accumulated_energy_per_hour
-
-  # Elbil-lader energiscore
-  - platform: energyscore
-    name: Elbil-lader Energy score
-    unique_id: energyscore.elbil
-    price_entity: sensor.nordpool_kwh_krsand_nok_3_095_025
-    energy_entity: sensor.ehzyxy7d_lifetime_energy
-
-  # VVB energiscore
-  - platform: energyscore
-    name: VVB Energy score
-    unique_id: energyscore.varmtvannsbereder
-    price_entity: sensor.nordpool_kwh_krsand_nok_3_095_025
-    energy_entity: sensor.shellypro1pm_30c6f781b29c_energy
-
-  # Bad kjeller energiscore
-  - platform: energyscore
-    name: Bad kjeller Energy score
-    unique_id: energyscore.bad_kjeller
-    price_entity: sensor.nordpool_kwh_krsand_nok_3_095_025
-    energy_entity: sensor.bad_kjeller_power
-
-  # Soverom 1 energiscore
-  - platform: energyscore
-    name: Soverom 1 Energy score
-    unique_id: energyscore.soverom_1
-    price_entity: sensor.nordpool_kwh_krsand_nok_3_095_025
-    energy_entity: sensor.a_l_soverom_power
-
   - platform: statistics
     name: "Oppvaskmaskin power gjennomsnitt"
     entity_id: sensor.oppvaskmaskin_filtrert
@@ -185,6 +150,7 @@
 ######################
 # Kostnadssensorer
 
+  # Elbil
   - platform: cost
     name: "E-Golf ladekostnad per måned"
     source: sensor.easee_used_energy
@@ -198,6 +164,7 @@
     unit_of_measurement: "kr"
     cron: yearly
 
+  # VVB
   - platform: cost
     name: "Varmtvannsbereder kostnad per år"
     source: sensor.shellypro1pm_30c6f781b29c_energy
@@ -211,7 +178,7 @@
     unit_of_measurement: "kr"
     cron: monthly
 
-
+  # Oppvaskmaskin
   - platform: cost
     name: "Oppvaskmaskin kostnad per år"
     source: sensor.oppvaskmaskin
@@ -225,6 +192,7 @@
     unit_of_measurement: "kr"
     cron: monthly
 
+  # Vaskemaskin
   - platform: cost
     name: "Vaskemaskin kostnad per år"
     source: sensor.shelly_vaskerom_energy
@@ -238,6 +206,7 @@
     unit_of_measurement: "kr"
     cron: monthly
 
+  # Tørketrommel
   - platform: cost
     name: "Tørketrommel kostnad per år"
     source: sensor.shelly1pm_244cab433137_energy

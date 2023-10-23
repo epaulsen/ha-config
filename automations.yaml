@@ -20,10 +20,10 @@
   alias: August reload
   description: Last inn Yale August på nytt
   trigger:
-    platform: time_pattern
-    hours: /4
+  - platform: time_pattern
+    hours: /1
   condition: []
   action:
-    service: homeassistant.reload_config_entry
+  - service: homeassistant.reload_config_entry
     entity_id: lock.inngangsdor
   mode: single
