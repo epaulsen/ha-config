@@ -45,8 +45,10 @@
           state: >
             {%set fuktighet = states('sensor.temperatur_bad_oppe_humidity') | float(0) %}
             {%set temp = states('sensor.temperatur_bad_oppe_temperature') | float(0) %}
+            {%if fuktighet != 0 and temp != 0 %}
             {%set x = (log(fuktighet/100) + (17.625 * temp)) / (243.04 + temp)%}
             {{ ((243.04 * x) / (17.625 - x)) | round(2)}}
+            {%endif%}
 
         # Sum av alt målt strømforbruk
         # Husk å oppdatere denne når nye enheter legges til.  Fast forbruk på 70W er nettverk og Glumserver
