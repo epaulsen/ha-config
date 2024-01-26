@@ -37,14 +37,15 @@
     price_type: kWh
     additional_costs: >
       {% set s = {
+        "innslag_stotte": 0.9125,
         "paaslag": 0.0345,
         "nettleie_natt": 0.35,
         "nettleie_dag": 0.47
       }
       %}
       {% set add_cost = 0%}
-      {% if current_price > 0.875 %}
-      {% set add_cost = 0.9 * (current_price - 0.875) * -1 %}
+      {% if current_price > s.innslag_stotte %}
+      {% set add_cost = 0.9 * (current_price - s.innslag_stotte) * -1 %}
       {%endif%}
       {% set add_cost = add_cost + s.paaslag %}
       {%if now().hour >=6 and now().hour < 23 %}
@@ -153,12 +154,14 @@
   # Elbil
   - platform: cost
     name: "E-Golf ladekostnad per måned"
+    unique_id: "sensor.e_golf_ladekostnad_per_maned"
     source: sensor.easee_used_energy
     tariff: sensor.nordpool_kwh_krsand_nok_3_095_025
     unit_of_measurement: "kr"
     cron: monthly
   - platform: cost
     name: "E-Golf kostnad per år"
+    unique_id: "sensor.e_golf_kostnad_per_ar"
     source: sensor.easee_used_energy
     tariff: sensor.nordpool_kwh_krsand_nok_3_095_025
     unit_of_measurement: "kr"
@@ -167,12 +170,14 @@
   # VVB
   - platform: cost
     name: "Varmtvannsbereder kostnad per år"
+    unique_id: "sensor.varmtvannsbereder_kostnad_per_ar"
     source: sensor.shellypro1pm_30c6f781b29c_energy
     tariff: sensor.nordpool_kwh_krsand_nok_3_095_025
     unit_of_measurement: "kr"
     cron: yearly
   - platform: cost
     name: "Varmtvannsbereder kostnad per måned"
+    unique_id: "sensor.varmtvannsbereder_kostnad_per_maned"
     source: sensor.shellypro1pm_30c6f781b29c_energy
     tariff: sensor.nordpool_kwh_krsand_nok_3_095_025
     unit_of_measurement: "kr"
@@ -181,12 +186,14 @@
   # Oppvaskmaskin
   - platform: cost
     name: "Oppvaskmaskin kostnad per år"
+    unique_id: "sensor.oppvaskmaskin_kostnad_per_ar"
     source: sensor.oppvaskmaskin
     tariff: sensor.nordpool_kwh_krsand_nok_3_095_025
     unit_of_measurement: "kr"
     cron: yearly
   - platform: cost
     name: "Oppvaskmaskin kostnad per måned"
+    unique_id: "sensor.oppvaskmaskin_kostnad_per_maned"
     source: sensor.oppvaskmaskin
     tariff: sensor.nordpool_kwh_krsand_nok_3_095_025
     unit_of_measurement: "kr"
@@ -195,12 +202,14 @@
   # Vaskemaskin
   - platform: cost
     name: "Vaskemaskin kostnad per år"
+    unique_id: "sensor.vaskemaskin_kostnad_per_ar"
     source: sensor.shelly_vaskerom_energy
     tariff: sensor.nordpool_kwh_krsand_nok_3_095_025
     unit_of_measurement: "kr"
     cron: yearly
   - platform: cost
     name: "Vaskemaskin kostnad per måned"
+    unique_id: "sensor.vaskemaskin_kostnad_per_maned"
     source: sensor.shelly_vaskerom_energy
     tariff: sensor.nordpool_kwh_krsand_nok_3_095_025
     unit_of_measurement: "kr"
@@ -209,25 +218,191 @@
   # Tørketrommel
   - platform: cost
     name: "Tørketrommel kostnad per år"
+    unique_id: "sensor.torketrommel_kostnad_per_ar"
     source: sensor.shelly1pm_244cab433137_energy
     tariff: sensor.nordpool_kwh_krsand_nok_3_095_025
     unit_of_measurement: "kr"
     cron: yearly
   - platform: cost
     name: "Tørketrommel kostnad per måned"
+    unique_id: "sensor.torketrommel_kostnad_per_maned"
     source: sensor.shelly1pm_244cab433137_energy
     tariff: sensor.nordpool_kwh_krsand_nok_3_095_025
     unit_of_measurement: "kr"
     cron: monthly
+  
+  # Varmeovn stue
+  - platform: cost
+    name: "Varmeovn stue kostnad per år"
+    unique_id: "sensor.varmeovn_stue_kostnad_per_ar"
+    source: sensor.varmeovn_stue_total_energi
+    tariff: sensor.nordpool_kwh_krsand_nok_3_095_025
+    unit_of_measurement: "kr"
+    cron: yearly
+  - platform: cost
+    name: "Varmeovn stue kostnad per måned"
+    unique_id: "sensor.varmeovn_stue_kostnad_per_maned"
+    source: sensor.varmeovn_stue_total_energi
+    tariff: sensor.nordpool_kwh_krsand_nok_3_095_025
+    unit_of_measurement: "kr"
+    cron: monthly
 
+  # Varmekabler sov1
+  - platform: cost
+    name: "Varmekabler sov1 kostnad per år"
+    unique_id: "sensor.varmekabler_sov1_kostnad_per_ar"
+    source: sensor.soverom_1
+    tariff: sensor.nordpool_kwh_krsand_nok_3_095_025
+    unit_of_measurement: "kr"
+    cron: yearly
+  - platform: cost
+    name: "Varmekabler sov1 kostnad per måned"
+    unique_id: "sensor.varmekabler_sov1_kostnad_per_maned"
+    source: sensor.soverom_1
+    tariff: sensor.nordpool_kwh_krsand_nok_3_095_025
+    unit_of_measurement: "kr"
+    cron: monthly
+
+  # Varmeovn sov1
+  - platform: cost
+    name: "Varmeovn sov1 kostnad per år"
+    unique_id: "sensor.varmeovn_sov1_kostnad_per_ar"
+    source: sensor.smartplugg1_energi
+    tariff: sensor.nordpool_kwh_krsand_nok_3_095_025
+    unit_of_measurement: "kr"
+    cron: yearly
+  - platform: cost
+    name: "Varmeovn sov1 kostnad per måned"
+    unique_id: "sensor.varmeovn_sov1_kostnad_per_maned"
+    source: sensor.smartplugg1_energi
+    tariff: sensor.nordpool_kwh_krsand_nok_3_095_025
+    unit_of_measurement: "kr"
+    cron: monthly
+  
+  # Varmekabler sov2
+  - platform: cost
+    name: "Varmekabler sov2 kostnad per år"
+    unique_id: "sensor.varmekabler_sov2_kostnad_per_ar"
+    source: sensor.soverom_2
+    tariff: sensor.nordpool_kwh_krsand_nok_3_095_025
+    unit_of_measurement: "kr"
+    cron: yearly
+  - platform: cost
+    name: "Varmekabler sov2 kostnad per måned"
+    unique_id: "sensor.varmekabler_sov2_kostnad_per_maned"
+    source: sensor.soverom_2
+    tariff: sensor.nordpool_kwh_krsand_nok_3_095_025
+    unit_of_measurement: "kr"
+    cron: monthly
+  
+  # Varmekabler sov3
+  - platform: cost
+    name: "Varmekabler sov3 kostnad per år"
+    unique_id: "sensor.varmekabler_sov3_kostnad_per_ar"
+    source: sensor.varmekabler_soverom_3
+    tariff: sensor.nordpool_kwh_krsand_nok_3_095_025
+    unit_of_measurement: "kr"
+    cron: yearly
+  - platform: cost
+    name: "Varmekabler sov3 kostnad per måned"
+    unique_id: "sensor.varmekabler_sov3_kostnad_per_maned"
+    source: sensor.varmekabler_soverom_3
+    tariff: sensor.nordpool_kwh_krsand_nok_3_095_025
+    unit_of_measurement: "kr"
+    cron: monthly
+
+  # Varmekabler sov4
+  - platform: cost
+    name: "Varmekabler sov4 kostnad per år"
+    unique_id: "sensor.varmekabler_sov4_kostnad_per_ar"
+    source: sensor.varmekabler_soverom_4
+    tariff: sensor.nordpool_kwh_krsand_nok_3_095_025
+    unit_of_measurement: "kr"
+    cron: yearly
+  - platform: cost
+    name: "Varmekabler sov4 kostnad per måned"
+    unique_id: "sensor.varmekabler_sov4_kostnad_per_maned"
+    source: sensor.varmekabler_soverom_4
+    tariff: sensor.nordpool_kwh_krsand_nok_3_095_025
+    unit_of_measurement: "kr"
+    cron: monthly
+
+  # Eirik skrivebord
+  - platform: cost
+    name: "Eirik PC kostnad per år"
+    unique_id: "sensor.eirik_pc_kostnad_per_ar"
+    source: sensor.eirik_pult_total_energi
+    tariff: sensor.nordpool_kwh_krsand_nok_3_095_025
+    unit_of_measurement: "kr"
+    cron: yearly
+  - platform: cost
+    name: "Eirik PC kostnad per måned"
+    unique_id: "sensor.eirik_pc_kostnad_per_maned"
+    source: sensor.eirik_pult_total_energi
+    tariff: sensor.nordpool_kwh_krsand_nok_3_095_025
+    unit_of_measurement: "kr"
+    cron: monthly
+
+  # Hjemmekontor
+  - platform: cost
+    name: "Hjemmekontor kostnad per år"
+    unique_id: "sensor.hjemmekontor_kostnad_per_ar"
+    source: sensor.pult_hjemmekontor_total_energi
+    tariff: sensor.nordpool_kwh_krsand_nok_3_095_025
+    unit_of_measurement: "kr"
+    cron: yearly
+  - platform: cost
+    unique_id: "sensor.hjemmekontor_kostnad_per_maned"
+    name: "Hjemmekontor kostnad per måned"
+    source: sensor.pult_hjemmekontor_total_energi
+    tariff: sensor.nordpool_kwh_krsand_nok_3_095_025
+    unit_of_measurement: "kr"
+    cron: monthly
+
+  # VK bad oppe
+  - platform: cost
+    name: "Varmekabler bad oppe kostnad per år"
+    unique_id: "sensor.varmekabler_bad_oppe_kostnad_per_ar"
+    source: sensor.varmekabler_bad_oppe
+    tariff: sensor.nordpool_kwh_krsand_nok_3_095_025
+    unit_of_measurement: "kr"
+    cron: yearly
+  - platform: cost
+    name: "Varmekabler bad oppe kostnad per måned"
+    unique_id: "sensor.varmekabler_bad_oppe_kostnad_per_maned"    
+    source: sensor.varmekabler_bad_oppe
+    tariff: sensor.nordpool_kwh_krsand_nok_3_095_025
+    unit_of_measurement: "kr"
+    cron: monthly
+
+  # VK bad kjeller
+  - platform: cost
+    name: "Varmekabler bad kjeller kostnad per år"
+    unique_id: "sensor.varmekabler_badk_kjeller_kostnad_per_ar"
+    source: sensor.bad_kjeller_energy_kwh
+    tariff: sensor.nordpool_kwh_krsand_nok_3_095_025
+    unit_of_measurement: "kr"
+    cron: yearly
+  - platform: cost
+    name: "Varmekabler bad kjeller kostnad per måned"
+    unique_id: "sensor.varmekabler_bad_kjeller_kostnad_per_maned"    
+    source: sensor.bad_kjeller_energy_kwh
+    tariff: sensor.nordpool_kwh_krsand_nok_3_095_025
+    unit_of_measurement: "kr"
+    cron: monthly
+  
+ 
+ # Umålt forbruk
   - platform: cost
     name: "Umålt forbruk kostnad per år"
+    unique_id: "sensor.umalt_forbruk_kostnad_per_ar"
     source: sensor.totalt_umalt_forbruk
     tariff: sensor.nordpool_kwh_krsand_nok_3_095_025
     unit_of_measurement: "kr"
     cron: yearly
   - platform: cost
     name: "Umålt forbruk kostnad per måned"
+    unique_id: "sensor.umalt_forbruk_kostnad_per_maned"
     source: sensor.totalt_umalt_forbruk
     tariff: sensor.nordpool_kwh_krsand_nok_3_095_025
     unit_of_measurement: "kr"

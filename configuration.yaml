@@ -31,6 +31,14 @@ homekit:
 
 nordpool:
 
+# Example configuration.yaml entry
+climate:
+  - platform: generic_thermostat
+    unique_id: climate.soverom_1_varmeovn
+    name: Soverom 1 Varmeovn
+    heater: switch.smartplugg1
+    target_sensor: sensor.temperatur_soverom_1   
+
 sensor: !include sensor.yaml
 
 template: !include template.yaml
@@ -59,12 +67,23 @@ mqtt:
 #      icon: 'mdi:graphql'
 
 tts:
-  - platform: google_cloud
-    key_file: googlecloud.json
-    voice: nb-NO-Wavenet-B
-    text_type: ssml
-    profiles:
-      - medium-bluetooth-speaker-class-device
+  - platform: microsoft
+    api_key: !secret microsoft_tts
+    language: nb-no
+    gender: Male
+    type: FinnNeural
+    region: westeurope
+    # rate: 20
+    # volume: -50
+    # pitch: high
+    # contour: (0, 0) (100, 100)
+    
+  # - platform: google_cloud
+  #   key_file: googlecloud.json
+  #   voice: nb-NO-Wavenet-B
+  #   text_type: ssml
+  #   profiles:
+  #     - medium-bluetooth-speaker-class-device
 
 automation: !include automations.yaml
 script: !include scripts.yaml
