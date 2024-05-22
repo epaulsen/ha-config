@@ -38,7 +38,7 @@
     additional_costs: >
       {% set s = {
         "innslag_stotte": 0.9125,
-        "paaslag": 0.0345,
+        "paaslag": 0,
         "nettleie_natt": 0.35,
         "nettleie_dag": 0.47
       }
