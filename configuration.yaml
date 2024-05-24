@@ -31,13 +31,13 @@ homekit:
 
 nordpool:
 
-# Example configuration.yaml entry
-climate:
-  - platform: generic_thermostat
-    unique_id: climate.soverom_1_varmeovn
-    name: Soverom 1 Varmeovn
-    heater: switch.smartplugg1
-    target_sensor: sensor.temperatur_soverom_1   
+# # Example configuration.yaml entry
+# climate:
+#   - platform: generic_thermostat
+#     unique_id: climate.soverom_1_varmeovn
+#     name: Soverom 1 Varmeovn
+#     heater: switch.smartplugg1
+#     target_sensor: sensor.temperatur_soverom_1   
 
 sensor: !include sensor.yaml
 
