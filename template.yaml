@@ -63,7 +63,7 @@
             {%endif%}
 
         # Sum av alt målt strømforbruk
-        # Husk å oppdatere denne når nye enheter legges til.  Fast forbruk på 70W er nettverk og Glumserver
+        # Husk å oppdatere denne når nye enheter legges til.
         - name: "Sum av alt målt forbruk"
           unique_id: sum_measured_consumption_w
           unit_of_measurement: "W"
@@ -84,8 +84,7 @@
             + (states('sensor.bad_oppe_vk_power') | float(0))
             + (states('sensor.pult_hjemmekontor_erling_current_power') | float(0))
             + (states('sensor.eirik_pult_current_power') | float(0))
-            + (states('sensor.varmeovn_stue_current_power') | float(0))
-            + (states('sensor.smartplugg1_current_power') | float(0))
+            + (states('sensor.varmepumpe_power') | float(0))      
             ) | round(2)
             }}
 

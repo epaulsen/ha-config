@@ -231,18 +231,24 @@
     unit_of_measurement: "kr"
     cron: monthly
   
-  # Varmeovn stue
+  # Varmepumepe
   - platform: cost
-    name: "Varmeovn stue kostnad per år"
-    unique_id: "sensor.varmeovn_stue_kostnad_per_ar"
-    source: sensor.varmeovn_stue_total_energi
+    name: "Varmepumpe stue kostnad livstid"
+    unique_id: "sensor.varmepumpe_kostnad_lifetime"
+    source: sensor.varmepumpe_energy
+    tariff: sensor.nordpool_kwh_krsand_nok_3_095_025
+    unit_of_measurement: "kr"    
+  - platform: cost
+    name: "Varmepumpe stue kostnad per år"
+    unique_id: "sensor.varmepumpe_kostnad_per_ar"
+    source: sensor.varmepumpe_energy
     tariff: sensor.nordpool_kwh_krsand_nok_3_095_025
     unit_of_measurement: "kr"
     cron: yearly
   - platform: cost
-    name: "Varmeovn stue kostnad per måned"
-    unique_id: "sensor.varmeovn_stue_kostnad_per_maned"
-    source: sensor.varmeovn_stue_total_energi
+    name: "Varmepumpe stue kostnad per måned"
+    unique_id: "sensor.varmepumpe_kostnad_per_maned"
+    source: sensor.varmepumpe_energy
     tariff: sensor.nordpool_kwh_krsand_nok_3_095_025
     unit_of_measurement: "kr"
     cron: monthly
