@@ -134,10 +134,77 @@
           state: >
             {{(((states('sensor.e_golf_ladekostnad_per_maned') | float(0))/(states('sensor.e_golf_kjorelengde_per_maned')) | float(0) + 0.0001)*10) | round(2)}}
 
+        - name: "Soverom 1 temperatur"
+          icon: "mdi:thermometer"
+          unique_id: "sensor.soverom_1_temperatur"
+          unit_of_measurement: "C"          
+          state: "{{ state_attr('climate.a_l_soverom','current_temperature') | float(0) }}"
+
+        - name: "Soverom 1 fuktighet"
+          icon: "mdi:water-percent"
+          unique_id: "sensor.soverom_1_fuktighet"
+          unit_of_measurement: "%"           
+          state: "{{state_attr('climate.a_l_soverom','current_humidity') | float(0)}}"
+
+        - name: "Soverom 2 temperatur"
+          icon: "mdi:thermometer"
+          unit_of_measurement: "C"          
+          unique_id: "sensor.soverom_2_temperatur"
+          state: "{{ state_attr('climate.e_og_l_a_soverom','current_temperature') | float(0) }}"
+
+        - name: "Soverom 2 fuktighet"
+          icon: "mdi:water-percent"
+          unique_id: "sensor.soverom_2_fuktighet"
+          unit_of_measurement: "%"          
+          state: "{{state_attr('climate.e_og_l_a_soverom','current_humidity') | float(0)}}"  
+        
+        - name: "Soverom 3 temperatur"
+          icon: "mdi:thermometer"
+          unique_id: "sensor.soverom_3_temperatur"
+          unit_of_measurement: "C"          
+          state: "{{ state_attr('climate.tobias_soverom','current_temperature') | float(0) }}"
+
+        - name: "Soverom 3 fuktighet"
+          icon: "mdi:water-percent"
+          unique_id: "sensor.soverom_3_fuktighet"
+          unit_of_measurement: "%"                    
+          state: "{{state_attr('climate.tobias_soverom','current_humidity') | float(0)}}"  
+
+        - name: "Soverom 4 temperatur"
+          icon: "mdi:thermometer"
+          unique_id: "sensor.soverom_4_temperatur"
+          unit_of_measurement: "C"        
+          state: "{{ state_attr('climate.m_h_soverom','current_temperature') | float(0) }}"
+
+        - name: "Soverom 4 fuktighet"
+          icon: "mdi:water-percent"
+          unique_id: "sensor.soverom_4_fuktighet"
+          unit_of_measurement: "%"          
+          state: "{{state_attr('climate.m_h_soverom','current_humidity') | float(0)}}"  
+        
+        - name: "Bad kjeller temperatur"
+          icon: "mdi:thermometer"
+          unique_id: "sensor.bad_kjeller_temperatur"
+          unit_of_measurement: "C"        
+          state: "{{ state_attr('climate.bad_kjeller','current_temperature') | float(0) }}"
+
+        - name: "Bad kjeller fuktighet"
+          icon: "mdi:water-percent"
+          unique_id: "sensor.bad_kjeller_fuktighet"
+          unit_of_measurement: "%"          
+          state: "{{state_attr('climate.bad_kjeller','current_humidity') | float(0)}}"  
+        
         - name: "Temperatur yttergang"
           icon: "mdi:thermometer"
-          unit_of_measurement: "C"
+          unique_id: "sensor.yttergang_temperatur"
+          unit_of_measurement: "C"      
           state: "{{ state_attr('climate.yttergang','current_temperature') | float(0) }}"
+
+        - name: "Yttergang fuktighet"
+          icon: "mdi:water-percent"
+          unique_id: "sensor.yttergang_fuktighet"
+          unit_of_measurement: "%"
+          state: "{{state_attr('climate.yttergang','current_humidity') | float(0)}}"  
 
         # Skyggesensor for tørketrommel
         # Dersom state er unavailable eller unknown, sett denne til 2W

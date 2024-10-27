@@ -15,15 +15,4 @@
   use_blueprint:
     path: erlendsellie/nordpool_reload.yaml
     input:
-      entity: sensor.nordpool_kwh_krsand_nok_3_095_025
-- id: '1696350865222'
-  alias: August reload
-  description: Last inn Yale August på nytt
-  trigger:
-  - platform: time_pattern
-    hours: /1
-  condition: []
-  action:
-  - service: homeassistant.reload_config_entry
-    entity_id: lock.inngangsdor
-  mode: single
+      entity: sensor.nordpool_kwh_no2_nok_3_095_025

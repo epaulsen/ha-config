@@ -20,3 +20,19 @@
         endif %} {% if mat < 7 %}, Matavfall{%- endif %}{% if papir < 7 %}, Papp&papir{%-
         endif %} {% if metall < 7 %}, Glass&metall{%- endif %}'
     enabled: true
+las_opp_ytterdor_erling:
+  alias: Lås opp ytterdør Erling
+  use_blueprint:
+    path: homeassistant/confirmable_notification.yaml
+    input:
+      notify_device: b9dbdc0639a66f313687058902d97795
+      title: Åpne ytterdør?
+      message: Skal jeg låse opp ytterdøren for deg?
+      confirm_text: Ja
+      dismiss_text: Nei
+      confirm_action:
+      - device_id: 6090b511ce94d4eddff48f2f9a77ee68
+        domain: lock
+        entity_id: 4f6e8b996dd13daa7b39e5555c4516ec
+        type: unlock
+  description: ''

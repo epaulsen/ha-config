@@ -8,7 +8,7 @@ homeassistant:
     - "/tmp"
 
 http:
-  ip_ban_enabled: true
+  ip_ban_enabled: false
   login_attempts_threshold: 3
   use_x_forwarded_for: true
   trusted_proxies:
@@ -31,14 +31,6 @@ homekit:
 
 nordpool:
 
-# # Example configuration.yaml entry
-# climate:
-#   - platform: generic_thermostat
-#     unique_id: climate.soverom_1_varmeovn
-#     name: Soverom 1 Varmeovn
-#     heater: switch.smartplugg1
-#     target_sensor: sensor.temperatur_soverom_1   
-
 sensor: !include sensor.yaml
 
 template: !include template.yaml
@@ -55,16 +47,25 @@ mqtt:
       state_topic: "E_Golf/Odometer"
       unit_of_measurement: "km"
       value_template: "{{ value_json.odometer }}"
- 
-#webhook:
 
-#  zigbee2mqtt_networkmap:
-#    #topic: your topic (optional, default zigbee2mqtt)
-#  panel_iframe:
-#    networkmap:
-#      title: 'Zigbee Map'
-#      url: '/local/community/zigbee2mqtt_networkmap/map.html'
-#      icon: 'mdi:graphql'
+# Database
+recorder:
+  db_url: !secret psql_connector_string
+  db_retry_wait: 10 # Wait 10 seconds before retrying
+  purge_keep_days: 90
+  exclude:
+    domains:
+      - automation
+      - updater
+    entity_globs:
+      - sensor.weather_*
+    entities:
+      - sun.sun # Don't record sun data
+      - sensor.last_boot # Comes from 'systemmonitor' sensor platform
+      - sensor.date
+    event_types:
+      - call_service # Don't record service calls
+
 
 tts:
   - platform: microsoft

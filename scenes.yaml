@@ -11,9 +11,12 @@
       - stop_effect
       supported_color_modes:
       - brightness
+      effect:
       color_mode: brightness
-      brightness: 82
+      brightness: 115
+      last_seen: '2024-10-01T22:57:51+02:00'
       linkquality: 255
+      power_on_behavior:
       friendly_name: Dimmer kjøkken
       supported_features: 44
       state: 'on'
@@ -27,9 +30,12 @@
       - stop_effect
       supported_color_modes:
       - brightness
+      effect:
       color_mode: brightness
-      brightness: 52
+      brightness: 99
+      last_seen: '2024-10-01T22:58:20+02:00'
       linkquality: 255
+      power_on_behavior:
       friendly_name: Benkelys kjøkken
       supported_features: 44
       state: 'on'
@@ -43,13 +49,16 @@
       - stop_effect
       supported_color_modes:
       - brightness
+      effect:
       color_mode: brightness
-      brightness: 69
+      brightness: 89
+      last_seen: '2024-10-01T22:59:58+02:00'
       linkquality: 255
-      friendly_name: Dimmer Gang Oppe
+      power_on_behavior:
+      friendly_name: Dimmer gang oppe
       supported_features: 44
       state: 'on'
-    light.dimmer_stue:
+    light.dimmer_yttergang:
       effect_list:
       - blink
       - breathe
@@ -59,26 +68,20 @@
       - stop_effect
       supported_color_modes:
       - brightness
-      linkquality: 255
-      friendly_name: Dimmer stue
-      supported_features: 44
+      effect:
       color_mode: brightness
-      brightness: 99
-      state: 'on'
-    light.0x588e81fffe5b6918:
-      effect_list:
-      - blink
-      - breathe
-      - okay
-      - channel_change
-      - finish_effect
-      - stop_effect
-      supported_color_modes:
-      - brightness
+      brightness: 66
+      last_seen: '2024-10-01T22:59:58+02:00'
       linkquality: 255
-      friendly_name: Lys spisebord
+      power_on_behavior:
+      update:
+        installed_version: 50947376
+        latest_version: 10
+        state: idle
+      update_available: false
+      friendly_name: Dimmer yttergang
       supported_features: 44
-      state: 'off'
+      state: 'on'
   metadata: {}
   icon: mdi:curtains
 - id: '1667023676184'
@@ -94,9 +97,12 @@
       - stop_effect
       supported_color_modes:
       - brightness
+      effect:
       color_mode: brightness
-      brightness: 91
-      linkquality: 252
+      brightness: 138
+      last_seen: '2024-10-01T22:28:02+02:00'
+      linkquality: 244
+      power_on_behavior:
       friendly_name: Benkelys kjøkken
       supported_features: 44
       state: 'on'
@@ -110,9 +116,12 @@
       - stop_effect
       supported_color_modes:
       - brightness
+      effect:
       color_mode: brightness
-      brightness: 77
+      brightness: 105
+      last_seen: '2024-10-01T22:27:34+02:00'
       linkquality: 255
+      power_on_behavior:
       friendly_name: Dimmer kjøkken
       supported_features: 44
       state: 'on'
@@ -126,9 +135,12 @@
       - stop_effect
       supported_color_modes:
       - brightness
+      effect:
       color_mode: brightness
-      brightness: 54
+      brightness: 102
+      last_seen: '2024-10-01T22:26:18+02:00'
       linkquality: 255
+      power_on_behavior:
       friendly_name: Dimmer stue
       supported_features: 44
       state: 'on'
@@ -142,9 +154,12 @@
       - stop_effect
       supported_color_modes:
       - brightness
+      effect:
       color_mode: brightness
-      brightness: 15
+      brightness: 84
+      last_seen: '2024-10-01T22:28:39+02:00'
       linkquality: 255
+      power_on_behavior:
       friendly_name: Lys spisebord
       supported_features: 44
       state: 'on'
@@ -158,19 +173,38 @@
       - stop_effect
       supported_color_modes:
       - brightness
+      effect:
       color_mode: brightness
-      brightness: 69
+      brightness: 97
+      last_seen: '2024-10-01T22:29:24+02:00'
       linkquality: 255
-      friendly_name: Dimmer Gang Oppe
+      power_on_behavior:
+      friendly_name: Dimmer gang oppe
       supported_features: 44
       state: 'on'
-    light.lys_yttergang:
+    light.dimmer_yttergang:
+      effect_list:
+      - blink
+      - breathe
+      - okay
+      - channel_change
+      - finish_effect
+      - stop_effect
       supported_color_modes:
       - brightness
+      effect:
       color_mode: brightness
-      brightness: 74
-      friendly_name: Lys yttergang
-      supported_features: 1
+      brightness: 94
+      last_seen: '2024-10-01T22:29:54+02:00'
+      linkquality: 255
+      power_on_behavior:
+      update:
+        installed_version: 50947376
+        latest_version: 10
+        state: idle
+      update_available: false
+      friendly_name: Dimmer yttergang
+      supported_features: 44
       state: 'on'
   icon: mdi:home-floor-0
   metadata:
@@ -184,7 +218,7 @@
       entity_only: true
     light.dimmer_gang_oppe:
       entity_only: true
-    light.lys_yttergang:
+    light.dimmer_yttergang:
       entity_only: true
 - id: '1667053312934'
   name: Dagslys
@@ -199,12 +233,15 @@
       - stop_effect
       supported_color_modes:
       - brightness
-      color_mode: brightness
-      brightness: 0
+      effect:
+      color_mode:
+      brightness:
+      last_seen: '2024-10-01T22:31:44+02:00'
       linkquality: 255
+      power_on_behavior:
       friendly_name: Benkelys kjøkken
       supported_features: 44
-      state: 'on'
+      state: 'off'
     light.dimmer_stue:
       effect_list:
       - blink
@@ -215,7 +252,12 @@
       - stop_effect
       supported_color_modes:
       - brightness
+      effect:
+      color_mode:
+      brightness:
+      last_seen: '2024-10-01T22:31:41+02:00'
       linkquality: 255
+      power_on_behavior:
       friendly_name: Dimmer stue
       supported_features: 44
       state: 'off'
@@ -229,7 +271,12 @@
       - stop_effect
       supported_color_modes:
       - brightness
-      linkquality: 176
+      effect:
+      color_mode:
+      brightness:
+      last_seen: '2024-10-01T22:30:43+02:00'
+      linkquality: 255
+      power_on_behavior:
       friendly_name: Lys spisebord
       supported_features: 44
       state: 'off'
@@ -243,12 +290,15 @@
       - stop_effect
       supported_color_modes:
       - brightness
-      color_mode: brightness
-      brightness: 0
+      effect:
+      color_mode:
+      brightness:
+      last_seen: '2024-10-01T22:31:44+02:00'
       linkquality: 255
+      power_on_behavior:
       friendly_name: Dimmer kjøkken
       supported_features: 44
-      state: 'on'
+      state: 'off'
     light.dimmer_gang_oppe:
       effect_list:
       - blink
@@ -259,19 +309,38 @@
       - stop_effect
       supported_color_modes:
       - brightness
+      effect:
       color_mode: brightness
       brightness: 69
+      last_seen: '2024-10-01T22:31:48+02:00'
       linkquality: 255
-      friendly_name: Dimmer Gang Oppe
+      power_on_behavior:
+      friendly_name: Dimmer gang oppe
       supported_features: 44
       state: 'on'
-    light.lys_yttergang:
+    light.dimmer_yttergang:
+      effect_list:
+      - blink
+      - breathe
+      - okay
+      - channel_change
+      - finish_effect
+      - stop_effect
       supported_color_modes:
       - brightness
+      effect:
       color_mode: brightness
       brightness: 74
-      friendly_name: Lys yttergang
-      supported_features: 1
+      last_seen: '2024-10-01T22:31:41+02:00'
+      linkquality: 255
+      power_on_behavior:
+      update:
+        installed_version: 50947376
+        latest_version: 10
+        state: idle
+      update_available: false
+      friendly_name: Dimmer yttergang
+      supported_features: 44
       state: 'on'
   metadata: {}
 - id: '1678602247616'
@@ -287,9 +356,10 @@
       - stop_effect
       supported_color_modes:
       - brightness
+      effect:
       color_mode: brightness
       brightness: 46
-      last_seen: '2023-07-30T22:25:56+02:00'
+      last_seen: '2024-10-01T22:27:34+02:00'
       linkquality: 255
       power_on_behavior:
       friendly_name: Dimmer kjøkken
@@ -305,15 +375,16 @@
       - stop_effect
       supported_color_modes:
       - brightness
+      effect:
       color_mode: brightness
       brightness: 46
-      last_seen: '2023-07-30T22:27:08+02:00'
-      linkquality: 255
+      last_seen: '2024-10-01T22:28:02+02:00'
+      linkquality: 244
       power_on_behavior:
       friendly_name: Benkelys kjøkken
       supported_features: 44
       state: 'on'
-    light.dimmer_stue:
+    light.dimmer_gang_oppe:
       effect_list:
       - blink
       - breathe
@@ -323,12 +394,37 @@
       - stop_effect
       supported_color_modes:
       - brightness
+      effect:
       color_mode: brightness
-      brightness: 79
-      last_seen: '2023-07-30T22:28:04+02:00'
+      brightness: 64
+      last_seen: '2024-10-01T22:31:05+02:00'
       linkquality: 255
       power_on_behavior:
-      friendly_name: Dimmer stue
+      friendly_name: Dimmer gang oppe
+      supported_features: 44
+      state: 'on'
+    light.dimmer_yttergang:
+      effect_list:
+      - blink
+      - breathe
+      - okay
+      - channel_change
+      - finish_effect
+      - stop_effect
+      supported_color_modes:
+      - brightness
+      effect:
+      color_mode: brightness
+      brightness: 91
+      last_seen: '2024-10-01T22:31:31+02:00'
+      linkquality: 255
+      power_on_behavior:
+      update:
+        installed_version: 50947376
+        latest_version: 10
+        state: idle
+      update_available: false
+      friendly_name: Dimmer yttergang
       supported_features: 44
       state: 'on'
   metadata:
@@ -336,7 +432,9 @@
       entity_only: true
     light.0x04cd15fffe0baf20:
       entity_only: true
-    light.dimmer_stue:
+    light.dimmer_gang_oppe:
+      entity_only: true
+    light.dimmer_yttergang:
       entity_only: true
 - id: '1678642726232'
   name: Autolys NATT
