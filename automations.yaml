@@ -1,14 +1,3 @@
-- id: '1672909779332'
-  alias: HA restart
-  description: ''
-  trigger:
-  - platform: homeassistant
-    event: start
-  condition: []
-  action:
-  - service: shell_command.ha_start
-    data: {}
-  mode: single
 - id: '1691497590953'
   alias: Nordpool - Reload Integration
   description: Nødvendig for å få inn timeverdier, dessverre...

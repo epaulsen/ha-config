@@ -1,9 +1,8 @@
-
 # Loads default set of integrations. Do not remove.
 default_config:
 
 homeassistant:
-  allowlist_external_dirs:    
+  allowlist_external_dirs:
     - "/media"
     - "/tmp"
 
@@ -12,20 +11,16 @@ http:
   login_attempts_threshold: 3
   use_x_forwarded_for: true
   trusted_proxies:
-    - 192.168.1.0/24  # Local Lan
-    - 172.10.0.0/24  # Docker network
+    - 192.168.1.0/24 # Local Lan
+    - 172.10.0.0/24 # Docker network
 
-shell_command:
-  ha_start: curl http://192.168.1.226:1880/endpoint/ha_start
+#shell_command:
+#  ha_start: curl http://192.168.1.226:1880/endpoint/ha_start
 
 logger:
   default: warn
   # logs:
   #   components.august: debug
-    
-duckdns:
-  domain: !secret duckdns_domain
-  access_token: !secret duckdns_token
 
 homekit:
 
@@ -52,7 +47,7 @@ mqtt:
 recorder:
   db_url: !secret psql_connector_string
   db_retry_wait: 10 # Wait 10 seconds before retrying
-  purge_keep_days: 90
+  purge_keep_days: 3650
   exclude:
     domains:
       - automation
@@ -66,7 +61,6 @@ recorder:
     event_types:
       - call_service # Don't record service calls
 
-
 tts:
   - platform: microsoft
     api_key: !secret microsoft_tts
@@ -78,7 +72,7 @@ tts:
     # volume: -50
     # pitch: high
     # contour: (0, 0) (100, 100)
-    
+
   # - platform: google_cloud
   #   key_file: googlecloud.json
   #   voice: nb-NO-Wavenet-B

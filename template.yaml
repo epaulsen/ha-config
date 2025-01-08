@@ -1,359 +1,350 @@
-    - sensor:
-        - name: "Lyssensor dag natt skumring"
-          unique_id: "lyssensor_dag_natt"
-          icon: mdi:sun-clock
-          state: >
-            {% set lux=(states('sensor.utendors_lys') | float(0))%}
-            {% if lux < 50 %}
-            NATT
-            {%elif lux < 300 %}
-            SKUMRING
-            {%else%}
-            DAG
-            {%endif%}
+- sensor:
+    - name: "Lyssensor dag natt skumring"
+      unique_id: "lyssensor_dag_natt"
+      icon: mdi:sun-clock
+      state: >
+        {% set lux=(states('sensor.utendors_lys') | float(0))%}
+        {% if lux < 50 %}
+        NATT
+        {%elif lux < 300 %}
+        SKUMRING
+        {%else%}
+        DAG
+        {%endif%}
 
-        - name: "Søppeltømming i morgen"
-          unique_id: "soppeltomming_i_morgen"
-          icon: mdi:trash-can
-          state: >
-            {% set tomming=0 %}
-            {% if states('sensor.avfallsor_bio_ab2ad662_7a53_4453_bf5b_4bb0b932c3be') | float == 1 %}
-            {% set tomming=1 %}
-            {% endif %}
-            {%if states('sensor.avfallsor_metal_ab2ad662_7a53_4453_bf5b_4bb0b932c3be') | float ==1 %}
-            {% set tomming=1 %}
-            {% endif %}
-            {%if states('sensor.avfallsor_mixed_ab2ad662_7a53_4453_bf5b_4bb0b932c3be') | float ==1 %}
-            {% set tomming=1 %}
-            {% endif %}
-            {%if states('sensor.avfallsor_paper_ab2ad662_7a53_4453_bf5b_4bb0b932c3be') | float ==1 %}
-            {% set tomming=1 %}
-            {% endif %}
-            {%if states('sensor.avfallsor_plastic_ab2ad662_7a53_4453_bf5b_4bb0b932c3be') | float ==1 %}
-            {% set tomming=1 %}
-            {% endif %}
-            {{ tomming }}
+    - name: "Søppeltømming i morgen"
+      unique_id: "soppeltomming_i_morgen"
+      icon: mdi:trash-can
+      state: >
+        {% set tomming=0 %}
+        {% if states('sensor.avfallsor_bio_ab2ad662_7a53_4453_bf5b_4bb0b932c3be') | float(0) == 1 %}
+        {% set tomming=1 %}
+        {% endif %}
+        {%if states('sensor.avfallsor_metal_ab2ad662_7a53_4453_bf5b_4bb0b932c3be') | float(0) ==1 %}
+        {% set tomming=1 %}
+        {% endif %}
+        {%if states('sensor.avfallsor_mixed_ab2ad662_7a53_4453_bf5b_4bb0b932c3be') | float(0) ==1 %}
+        {% set tomming=1 %}
+        {% endif %}
+        {%if states('sensor.avfallsor_paper_ab2ad662_7a53_4453_bf5b_4bb0b932c3be') | float(0) ==1 %}
+        {% set tomming=1 %}
+        {% endif %}
+        {%if states('sensor.avfallsor_plastic_ab2ad662_7a53_4453_bf5b_4bb0b932c3be') | float(0) ==1 %}
+        {% set tomming=1 %}
+        {% endif %}
+        {{ tomming }}
 
-        - name: "Temperatur kjellergang"
-          icon: "mdi:thermometer"
-          unit_of_measurement: "°C"
-          state: "{{ state_attr('climate.gang_kjeller','current_temperature') | float(10) }}"
+    - name: "Temperatur kjellergang"
+      icon: "mdi:thermometer"
+      unit_of_measurement: "°C"
+      state: "{{ state_attr('climate.gang_kjeller','current_temperature') | float(10) }}"
 
-        - name: "Temperatur soverom 1"
-          unique_id: "sensor.soverom_1_temperature"
-          icon: "mdi:thermometer"
-          unit_of_measurement: "°C"
-          state: "{{ state_attr('climate.a_l_soverom','current_temperature') | float(10) }}"
+    - name: "Temperatur soverom 1"
+      unique_id: "sensor.soverom_1_temperature"
+      icon: "mdi:thermometer"
+      unit_of_measurement: "°C"
+      state: "{{ state_attr('climate.a_l_soverom','current_temperature') | float(10) }}"
 
-        - name: "Soverom 1 setpoint"
-          unique_id: "sensor.soverom_1_setpoint"
-          icon: "mdi:thermometer"
-          unit_of_measurement: "°C"
-          state: "{{ state_attr('climate.a_l_soverom','temperature') | float }}"
+    - name: "Soverom 1 setpoint"
+      unique_id: "sensor.soverom_1_setpoint"
+      icon: "mdi:thermometer"
+      unit_of_measurement: "°C"
+      state: "{{ state_attr('climate.a_l_soverom','temperature') | float }}"
 
-        - name: "Duggpunkt bad oppe"
-          icon: "mdi:thermometer"
-          unit_of_measurement: "°C"
-          state: >
-            {%set fuktighet = states('sensor.temperatur_bad_oppe_humidity') | float(0) %}
-            {%set temp = states('sensor.temperatur_bad_oppe_temperature') | float(0) %}
-            {%if fuktighet != 0 and temp != 0 %}
-            {%set x = (log(fuktighet/100) + (17.625 * temp)) / (243.04 + temp)%}
-            {{ ((243.04 * x) / (17.625 - x)) | round(2)}}
-            {%endif%}
+    # Sum av alt målt strømforbruk
+    # Husk å oppdatere denne når nye enheter legges til.
+    - name: "Sum av alt målt forbruk"
+      unique_id: sum_measured_consumption_w
+      unit_of_measurement: "W"
+      icon: "mdi:lightning-bolt-outline"
+      state: >
+        {{
+        ((states('sensor.ehzyxy7d_power') | float(0) * 1000)
+        + (states('sensor.shellypro1pm_30c6f781b29c_power') | float(0))
+        + (states('sensor.a_l_soverom_power_2') | float(0))
+        + (states('sensor.e_og_l_a_soverom_power_2') | float(0))
+        + (states('sensor.bad_kjeller_power_2') | float(0))
+        + (states('sensor.gang_kjeller_power_2') | float(0))
+        + (states('sensor.yttergang_power_2') | float(0))
+        + (states('sensor.tobias_soverom_power_2') | float(0))
+        + (states('sensor.m_h_soverom_power_2') | float(0))
+        + (states('sensor.oppvaskmaskin_power') | float(0))
+        + (states('sensor.shelly_vaskerom_power') | float(0))
+        + (states('sensor.shelly1pm_244cab433137_power') | float(0))
+        + (states('sensor.bad_oppe_vk_power') | float(0))
+        + (states('sensor.pult_hjemmekontor_erling_current_power') | float(0))
+        + (states('sensor.eirik_pult_current_power') | float(0))
+        + (states('sensor.varmepumpe_power') | float(0)) 
+        + (states('sensor.shelly_fryseboks_power') | float(0))
+        + (states('sensor.shelly_kjoleskap_power') | float(0))
+        ) | round(2)
+        }}
 
-        # Sum av alt målt strømforbruk
-        # Husk å oppdatere denne når nye enheter legges til.
-        - name: "Sum av alt målt forbruk"
-          unique_id: sum_measured_consumption_w
-          unit_of_measurement: "W"
-          icon: "mdi:lightning-bolt-outline"
-          state: >
-            {{((states('sensor.ehzyxy7d_power') | float(0) * 1000)
-            + (states('sensor.shellypro1pm_30c6f781b29c_power') | float(0))
-            + (states('sensor.a_l_soverom_power') | float(0))
-            + (states('sensor.e_og_l_a_soverom_power') | float(0))
-            + (states('sensor.bad_kjeller_power') | float(0))
-            + (states('sensor.gang_kjeller_power') | float(0))
-            + (states('sensor.yttergang_power') | float(0))
-            + (states('sensor.tobias_soverom_power') | float(0))
-            + (states('sensor.m_h_soverom_power') | float(0))
-            + (states('sensor.oppvaskmaskin_power') | float(0))
-            + (states('sensor.shelly_vaskerom_power') | float(0))
-            + (states('sensor.shelly1pm_244cab433137_power') | float(0))
-            + (states('sensor.bad_oppe_vk_power') | float(0))
-            + (states('sensor.pult_hjemmekontor_erling_current_power') | float(0))
-            + (states('sensor.eirik_pult_current_power') | float(0))
-            + (states('sensor.varmepumpe_power') | float(0))      
-            ) | round(2)
-            }}
+    # Sum av alt umålt strømforbruk
 
-        # Sum av alt umålt strømforbruk
+    - name: "Sum av alt umålt forbruk"
+      unique_id: sum_unmeasured_consumption_w
+      unit_of_measurement: "W"
+      icon: "mdi:lightning-bolt-outline"
+      state: >
+        {% set power=(states('sensor.0x086bd7fffeb6c404_power') | float(0)) - (states('sensor.sum_av_alt_forbruk') | float(0))  %}
+        {%if power > 0%}
+        {{power}}
+        {%else%}
+        0
+        {%endif%}
 
-        - name: "Sum av alt umålt forbruk"
-          unique_id: sum_unmeasured_consumption_w
-          unit_of_measurement: "W"
-          icon: "mdi:lightning-bolt-outline"
-          state: >
-            {% set power=(states('sensor.0x086bd7fffeb6c404_power') | float(0)) - (states('sensor.sum_av_alt_forbruk') | float(0))  %}
-            {%if power > 0%}
-            {{power}}
-            {%else%}
-            0
-            {%endif%}
+    - name: "Elbil ladetid"
+      unique_id: "elbil_ladetid_hours"
+      state: >
+        {% set battery = states('input_number.elbil_batteristorrelse') | float %}
+        {% set speed = states('input_number.elbil_lader_hastighet') | float %}
+        {% set ladeprosent = (100 - (states('sensor.e_golf_soc') | float(0)))/100%}
+        {% set ant_Wh = (battery * ladeprosent) * 1000 %}
+        {{ (ant_Wh / speed) | round(2) }}
 
-        - name: "Elbil ladetid"
-          unique_id: "elbil_ladetid_hours"
-          state: >
-            {% set battery = states('input_number.elbil_batteristorrelse') | float %}
-            {% set speed = states('input_number.elbil_lader_hastighet') | float %}
-            {% set ladeprosent = (100 - (states('sensor.e_golf_soc') | float(0)))/100%}
-            {% set ant_Wh = (battery * ladeprosent) * 1000 %}
-            {{ (ant_Wh / speed) | round(2) }}
+    - name: "Elbil kabel tilkobled"
+      unique_id: "elbil_ladekabel_tilkoblet"
+      state: >
+        {% if states('sensor.ehzyxy7d_status')=='disconnected' %}
+        off
+        {%else%}
+        on
+        {%endif%}
 
+    - name: "E-Golf gjenværende kilometer forsikring"
+      unique_id: "sensor.e_golf_gjenvarende_forsikring"
+      unit_of_measurement: "km"
+      state: >
+        {{states('input_number.forsikring_kjorelengde') | float(0) - (states('sensor.e_golf_kilometerstand') | float(0))}}
 
-        - name: "Elbil kabel tilkobled"
-          unique_id: "elbil_ladekabel_tilkoblet"
-          state: >
-            {% if states('sensor.ehzyxy7d_status')=='disconnected' %}
-            off
-            {%else%}
-            on
-            {%endif%}
-      
-        - name: "E-Golf gjenværende kilometer forsikring"
-          unique_id: "sensor.e_golf_gjenvarende_forsikring"
-          unit_of_measurement: "km"
-          state: >
-            {{states('input_number.forsikring_kjorelengde') | float(0) - (states('sensor.e_golf_kilometerstand') | float(0))}}
-            
-        - name: "E-Golf kostnad per mil"
-          unique_id: "sensor.e_golf_kostnad_per_mil"
-          unit_of_measurement: "NOK/mil"
-          icon: "mdi:cash-check"
-          state: >
-            {{(((states('sensor.e_golf_ladekostnad_per_maned') | float(0))/(states('sensor.e_golf_kjorelengde_per_maned')) | float(0) + 0.0001)*10) | round(2)}}
+    - name: "E-Golf kostnad per mil"
+      unique_id: "sensor.e_golf_kostnad_per_mil"
+      unit_of_measurement: "NOK/mil"
+      icon: "mdi:cash-check"
+      state: >
+        {{(((states('sensor.e_golf_ladekostnad_per_maned') | float(0))/(states('sensor.e_golf_kjorelengde_per_maned')) | float(0) + 0.0001)*10) | round(2)}}
 
-        - name: "Soverom 1 temperatur"
-          icon: "mdi:thermometer"
-          unique_id: "sensor.soverom_1_temperatur"
-          unit_of_measurement: "C"          
-          state: "{{ state_attr('climate.a_l_soverom','current_temperature') | float(0) }}"
+    - name: "Soverom 1 temperatur"
+      icon: "mdi:thermometer"
+      unique_id: "sensor.soverom_1_temperatur"
+      unit_of_measurement: "C"
+      state: "{{ state_attr('climate.a_l_soverom','current_temperature') | float(0) }}"
 
-        - name: "Soverom 1 fuktighet"
-          icon: "mdi:water-percent"
-          unique_id: "sensor.soverom_1_fuktighet"
-          unit_of_measurement: "%"           
-          state: "{{state_attr('climate.a_l_soverom','current_humidity') | float(0)}}"
+    - name: "Soverom 1 fuktighet"
+      icon: "mdi:water-percent"
+      unique_id: "sensor.soverom_1_fuktighet"
+      unit_of_measurement: "%"
+      state: "{{state_attr('climate.a_l_soverom','current_humidity') | float(0)}}"
 
-        - name: "Soverom 2 temperatur"
-          icon: "mdi:thermometer"
-          unit_of_measurement: "C"          
-          unique_id: "sensor.soverom_2_temperatur"
-          state: "{{ state_attr('climate.e_og_l_a_soverom','current_temperature') | float(0) }}"
+    - name: "Soverom 2 temperatur"
+      icon: "mdi:thermometer"
+      unit_of_measurement: "C"
+      unique_id: "sensor.soverom_2_temperatur"
+      state: "{{ state_attr('climate.e_og_l_a_soverom','current_temperature') | float(0) }}"
 
-        - name: "Soverom 2 fuktighet"
-          icon: "mdi:water-percent"
-          unique_id: "sensor.soverom_2_fuktighet"
-          unit_of_measurement: "%"          
-          state: "{{state_attr('climate.e_og_l_a_soverom','current_humidity') | float(0)}}"  
-        
-        - name: "Soverom 3 temperatur"
-          icon: "mdi:thermometer"
-          unique_id: "sensor.soverom_3_temperatur"
-          unit_of_measurement: "C"          
-          state: "{{ state_attr('climate.tobias_soverom','current_temperature') | float(0) }}"
+    - name: "Soverom 2 fuktighet"
+      icon: "mdi:water-percent"
+      unique_id: "sensor.soverom_2_fuktighet"
+      unit_of_measurement: "%"
+      state: "{{state_attr('climate.e_og_l_a_soverom','current_humidity') | float(0)}}"
 
-        - name: "Soverom 3 fuktighet"
-          icon: "mdi:water-percent"
-          unique_id: "sensor.soverom_3_fuktighet"
-          unit_of_measurement: "%"                    
-          state: "{{state_attr('climate.tobias_soverom','current_humidity') | float(0)}}"  
+    - name: "Soverom 3 temperatur"
+      icon: "mdi:thermometer"
+      unique_id: "sensor.soverom_3_temperatur"
+      unit_of_measurement: "C"
+      state: "{{ state_attr('climate.tobias_soverom','current_temperature') | float(0) }}"
 
-        - name: "Soverom 4 temperatur"
-          icon: "mdi:thermometer"
-          unique_id: "sensor.soverom_4_temperatur"
-          unit_of_measurement: "C"        
-          state: "{{ state_attr('climate.m_h_soverom','current_temperature') | float(0) }}"
+    - name: "Soverom 3 fuktighet"
+      icon: "mdi:water-percent"
+      unique_id: "sensor.soverom_3_fuktighet"
+      unit_of_measurement: "%"
+      state: "{{state_attr('climate.tobias_soverom','current_humidity') | float(0)}}"
 
-        - name: "Soverom 4 fuktighet"
-          icon: "mdi:water-percent"
-          unique_id: "sensor.soverom_4_fuktighet"
-          unit_of_measurement: "%"          
-          state: "{{state_attr('climate.m_h_soverom','current_humidity') | float(0)}}"  
-        
-        - name: "Bad kjeller temperatur"
-          icon: "mdi:thermometer"
-          unique_id: "sensor.bad_kjeller_temperatur"
-          unit_of_measurement: "C"        
-          state: "{{ state_attr('climate.bad_kjeller','current_temperature') | float(0) }}"
+    - name: "Soverom 4 temperatur"
+      icon: "mdi:thermometer"
+      unique_id: "sensor.soverom_4_temperatur"
+      unit_of_measurement: "C"
+      state: "{{ state_attr('climate.m_h_soverom','current_temperature') | float(0) }}"
 
-        - name: "Bad kjeller fuktighet"
-          icon: "mdi:water-percent"
-          unique_id: "sensor.bad_kjeller_fuktighet"
-          unit_of_measurement: "%"          
-          state: "{{state_attr('climate.bad_kjeller','current_humidity') | float(0)}}"  
-        
-        - name: "Temperatur yttergang"
-          icon: "mdi:thermometer"
-          unique_id: "sensor.yttergang_temperatur"
-          unit_of_measurement: "C"      
-          state: "{{ state_attr('climate.yttergang','current_temperature') | float(0) }}"
+    - name: "Soverom 4 fuktighet"
+      icon: "mdi:water-percent"
+      unique_id: "sensor.soverom_4_fuktighet"
+      unit_of_measurement: "%"
+      state: "{{state_attr('climate.m_h_soverom','current_humidity') | float(0)}}"
 
-        - name: "Yttergang fuktighet"
-          icon: "mdi:water-percent"
-          unique_id: "sensor.yttergang_fuktighet"
-          unit_of_measurement: "%"
-          state: "{{state_attr('climate.yttergang','current_humidity') | float(0)}}"  
+    - name: "Bad kjeller temperatur"
+      icon: "mdi:thermometer"
+      unique_id: "sensor.bad_kjeller_temperatur"
+      unit_of_measurement: "C"
+      state: "{{ state_attr('climate.bad_kjeller','current_temperature') | float(0) }}"
 
-        # Skyggesensor for tørketrommel
-        # Dersom state er unavailable eller unknown, sett denne til 2W
-        # Dette for å unngå å trigge varsling om at tørketrommel er ferdig
-        # hvis Shelly-sensoren finner på å reboote(noe den gjør ofte)
-        - name: "Tørketrommel filtrert"
-          icon: "mdi:lightning-bolt"
-          unique_id: torketrommel_filtrert
-          unit_of_measurement: "W"
-          state: >
-            {% if states('sensor.shelly1pm_244cab433137_power') == 'unknown' or states('sensor.shelly1pm_244cab433137_power') == 'unavailable'  %}
-            2
-            {% else %}
-            {{states('sensor.shelly1pm_244cab433137_power')}}
-            {% endif %}
+    - name: "Bad kjeller fuktighet"
+      icon: "mdi:water-percent"
+      unique_id: "sensor.bad_kjeller_fuktighet"
+      unit_of_measurement: "%"
+      state: "{{state_attr('climate.bad_kjeller','current_humidity') | float(0)}}"
 
-        ## Skyggesensorer pga. feilkonfig av kostnader.  Kan ikke endre dem siden de ikke har en unique-id.                  
-        - name: "Bad kjeller energy kwh"
-          unique_id: "sensor.bad_kjeller_energy_kwh"
-          unit_of_measurement: "kWh"
-          state: >
-            {% if is_state('sensor.varmekabler_bad_kjeller', 'unknown') or is_state('sensor.varmekabler_bad_kjeller', 'unavailable') %}
-              0
-            {% else %}
-            {{(states('sensor.varmekabler_bad_kjeller') | float(0) / 1000) | round(2)}}
-            {%endif%}
+    - name: "Temperatur yttergang"
+      icon: "mdi:thermometer"
+      unique_id: "sensor.yttergang_temperatur"
+      unit_of_measurement: "C"
+      state: "{{ state_attr('climate.yttergang','current_temperature') | float(0) }}"
 
-        # Denne eksisterer utelukkende pga. idiotisk Eva Smartplugg, som rapporterer 0-2 watt uavhengig av om oppvaskmaskin
-        # er på eller ikke.  I tillegg så har oppvaskmaskin en negativ spike på -32768 W av og til, tyder på korrupt firmware.
-        #*ZG8vpJBYJZP
-        - name: "Oppvaskmaskin filtrert"
-          icon: "mdi:lightning-bolt"
-          unique_id: oppvaskmaskin_filtrert
-          unit_of_measurement: "W"
-          state: >
-            {% if states('sensor.oppvaskmaskin_power') == 'unknown' %} 
-              0
-            {% elif states('sensor.oppvaskmaskin_power') | float < 5 %}
-              0
-            {% else %}
-              {{ states('sensor.oppvaskmaskin_power') }}
-            {% endif %}
+    - name: "Yttergang fuktighet"
+      icon: "mdi:water-percent"
+      unique_id: "sensor.yttergang_fuktighet"
+      unit_of_measurement: "%"
+      state: "{{state_attr('climate.yttergang','current_humidity') | float(0)}}"
 
-        - name: "Timer siden varmtvannsbereder ferdig"
-          icon: "mdi:water-boiler-alert"
-          unit_of_measurement: "hours"
-          state: >
-            {%if states('input_datetime.varmtvannsbereder_sist_ferdig') == 'unknown'%}
-            unknown
-            {%else%}
-            {%if states('input_datetime.varmtvannsbereder_sist_ferdig') == 'unavailable'%}
-            unavailable
-            {%else%}
-            {{((now() | as_timestamp) - (states('input_datetime.varmtvannsbereder_sist_ferdig') | as_timestamp -3600)) / 3600}}
-            {%endif%}
-            {%endif%}
-        - name: "Oppvaskmaskin Power"
-          icon: "mdi:lightning-bolt"
-          unit_of_measurement: "W"
-          state: >
-            {% if is_state('sensor.smartplugg_oppvaskmaskin_power', 'unknown') or is_state('sensor.smartplugg_oppvaskmaskin_power', 'unavailable') %}
-              0
-            {% else %}
-            {% set power = (states('sensor.smartplugg_oppvaskmaskin_power') | float(0)) -10 %}
-            {% if power < 0 %}
-            {% set power = 0 %}
-            {% endif %}
-            {{ power }}
-            {% endif %}
+    # Skyggesensor for tørketrommel
+    # Dersom state er unavailable eller unknown, sett denne til 2W
+    # Dette for å unngå å trigge varsling om at tørketrommel er ferdig
+    # hvis Shelly-sensoren finner på å reboote(noe den gjør ofte)
+    - name: "Tørketrommel filtrert"
+      icon: "mdi:lightning-bolt"
+      unique_id: torketrommel_filtrert
+      unit_of_measurement: "W"
+      state: >
+        {% if states('sensor.shelly1pm_244cab433137_power') == 'unknown' or states('sensor.shelly1pm_244cab433137_power') == 'unavailable'  %}
+        2
+        {% else %}
+        {{states('sensor.shelly1pm_244cab433137_power')}}
+        {% endif %}
 
-        - name: "Bad oppe VK power"
-          icon: "mdi:lightning-bolt"
-          unique_id: sensor.bad_oppe_vk_power
-          unit_of_measurement: "W"
-          state: >
-            {% set naa = now().hour %}
-            {% set volt = states('sensor.0x086bd7fffeb6c404_voltage') | float(0) %}
-            {% set effekt = volt * volt / 375 %}
-            {% if state_attr('climate.termostat_bad_oppe','running_state') == 'heat' %}
-            {{effekt}}
-            {%else%}
-            0
-            {%endif%}
+    ## Skyggesensorer pga. feilkonfig av kostnader.  Kan ikke endre dem siden de ikke har en unique-id.
+    - name: "Bad kjeller energy kwh"
+      unique_id: "sensor.bad_kjeller_energy_kwh"
+      unit_of_measurement: "kWh"
+      state: >
+        {% if is_state('sensor.varmekabler_bad_kjeller', 'unknown') or is_state('sensor.varmekabler_bad_kjeller', 'unavailable') %}
+          0
+        {% else %}
+        {{(states('sensor.varmekabler_bad_kjeller') | float(0) / 1000) | round(2)}}
+        {%endif%}
 
-        #hvac_action: heating <-- PÅ
-        #running_state: idle
-        #running_state: heat
+    # Denne eksisterer utelukkende pga. idiotisk Eva Smartplugg, som rapporterer 0-2 watt uavhengig av om oppvaskmaskin
+    # er på eller ikke.  I tillegg så har oppvaskmaskin en negativ spike på -32768 W av og til, tyder på korrupt firmware.
+    #*ZG8vpJBYJZP
+    - name: "Oppvaskmaskin filtrert"
+      icon: "mdi:lightning-bolt"
+      unique_id: oppvaskmaskin_filtrert
+      unit_of_measurement: "W"
+      state: >
+        {% if states('sensor.oppvaskmaskin_power') == 'unknown' %} 
+          0
+        {% elif states('sensor.oppvaskmaskin_power') | float < 5 %}
+          0
+        {% else %}
+          {{ states('sensor.oppvaskmaskin_power') }}
+        {% endif %}
 
-        - name: "Termometer Veranda"
-          icon: "mdi:sun-thermometer"
-          unit_of_measurement: "C"
-          state: >
-            {%  if states('sensor.utendorssensor_veranda_temperature')=='unknown' %}0{% else %}{{ states('sensor.utendorssensor_veranda_temperature')|float |round(1) }}{% endif %}
+    - name: "Timer siden varmtvannsbereder ferdig"
+      icon: "mdi:water-boiler-alert"
+      unit_of_measurement: "hours"
+      state: >
+        {%if states('input_datetime.varmtvannsbereder_sist_ferdig') == 'unknown'%}
+        unknown
+        {%else%}
+        {%if states('input_datetime.varmtvannsbereder_sist_ferdig') == 'unavailable'%}
+        unavailable
+        {%else%}
+        {{((now() | as_timestamp) - (states('input_datetime.varmtvannsbereder_sist_ferdig') | as_timestamp -3600)) / 3600}}
+        {%endif%}
+        {%endif%}
+    - name: "Oppvaskmaskin Power"
+      icon: "mdi:lightning-bolt"
+      unit_of_measurement: "W"
+      state: >
+        {% if is_state('sensor.smartplugg_oppvaskmaskin_power', 'unknown') or is_state('sensor.smartplugg_oppvaskmaskin_power', 'unavailable') %}
+          0
+        {% else %}
+        {% set power = (states('sensor.smartplugg_oppvaskmaskin_power') | float(0)) -10 %}
+        {% if power < 0 %}
+        {% set power = 0 %}
+        {% endif %}
+        {{ power }}
+        {% endif %}
 
-        - name: "Kjøkken lys status"
-          unique_id: sensor.kjokken_lys_status
-          state: >
-            {% if states('sensor.lys_gang_oppe_3') | float(0) > 100 %}
-            {%set status = "AV" %}
-            {% elif states('sensor.lys_gang_oppe_3') | float(0) > 60 %}
-            {%set status = "BENK" %}
-            {% else %}
-            {%set status = "BEGGE" %}
-            {%endif%}
-            {{status}}
-          
-        - name: "Gang oppe lys status"
-          state: >
-            {% if states('sensor.lys_gang_oppe') | float(0) > 60 %}
-            {%set status = "AV" %}
-            {% else %}
-            {%set status = "PÅ" %}
-            {%endif%}
-            {{status}}        
+    - name: "Bad oppe VK power"
+      icon: "mdi:lightning-bolt"
+      unique_id: sensor.bad_oppe_vk_power
+      unit_of_measurement: "W"
+      state: >
+        {% set naa = now().hour %}
+        {% set volt = states('sensor.0x086bd7fffeb6c404_voltage') | float(0) %}
+        {% set effekt = volt * volt / 375 %}
+        {% if state_attr('climate.termostat_bad_oppe','running_state') == 'heat' %}
+        {{effekt}}
+        {%else%}
+        0
+        {%endif%}
 
-        - name: "Trapp lys status"
-          state: >
-            {% if states('sensor.lys_gang_oppe_2') | float(0) > 300 %}
-            {%set status = "AV" %}
-            {% else %}
-            {%set status = "PÅ" %}
-            {%endif%}
-            {{status}}
+    #hvac_action: heating <-- PÅ
+    #running_state: idle
+    #running_state: heat
 
-        - name: "Yttergang lys status"
-          state: >
-            {% if states('sensor.lysstyrke_yttergang') | float(0) > 60 %}
-            {%set status = "AV" %}
-            {% else %}
-            {%set status = "PÅ" %}
-            {%endif%}
-            {{status}}
-            
-        # - name: "Unavailable Entities"
-        #   unique_id: unavailable_entities
-        #   icon: "{{ iif(states(this.entity_id)|int(0) > 0,'mdi:alert-circle','mdi:check-circle') }}"
-        #   unit_of_measurement: entities
-        #   state: >
-        #     {% set entities = state_attr(this.entity_id,'entity_id') %}
-        #     {% if entities != none %} {{ entities|count }} {% endif %}
-        #   attributes:
-        #     entity_id: >
-        #       {% set ignore_seconds = 240 %}
-        #       {% set ignored = state_attr('group.ignored_unavailable_entities','entity_id') %}
-        #       {% set ignore_ts = (now().timestamp() - ignore_seconds)|as_datetime %}
-        #       {% set entities = states|rejectattr('domain','eq','group')
-        #           |rejectattr('last_changed','ge',ignore_ts)
-        #           |selectattr('state','in',['unavailable','unknown']) %}
-        #       {% if ignored != none %}
-        #         {% set entities =  entities|rejectattr('entity_id','in',ignored) %}
-        #       {% endif %}
-        #       {{ entities|map(attribute='entity_id')|list }}
+    - name: "Termometer Veranda"
+      icon: "mdi:sun-thermometer"
+      unit_of_measurement: "C"
+      state: >
+        {%  if states('sensor.utendorssensor_veranda_temperature')=='unknown' %}0{% else %}{{ states('sensor.utendorssensor_veranda_temperature')|float |round(1) }}{% endif %}
+
+    - name: "Kjøkken lys status"
+      unique_id: sensor.kjokken_lys_status
+      state: >
+        {% if states('sensor.lys_gang_oppe_3') | float(0) > 100 %}
+        {%set status = "AV" %}
+        {% elif states('sensor.lys_gang_oppe_3') | float(0) > 60 %}
+        {%set status = "BENK" %}
+        {% else %}
+        {%set status = "BEGGE" %}
+        {%endif%}
+        {{status}}
+
+    - name: "Gang oppe lys status"
+      state: >
+        {% if states('sensor.lys_gang_oppe') | float(0) > 60 %}
+        {%set status = "AV" %}
+        {% else %}
+        {%set status = "PÅ" %}
+        {%endif%}
+        {{status}}
+
+    - name: "Trapp lys status"
+      state: >
+        {% if states('sensor.lys_gang_oppe_2') | float(0) > 300 %}
+        {%set status = "AV" %}
+        {% else %}
+        {%set status = "PÅ" %}
+        {%endif%}
+        {{status}}
+
+    - name: "Yttergang lys status"
+      state: >
+        {% if states('sensor.lysstyrke_yttergang') | float(0) > 60 %}
+        {%set status = "AV" %}
+        {% else %}
+        {%set status = "PÅ" %}
+        {%endif%}
+        {{status}}
+
+    # - name: "Unavailable Entities"
+    #   unique_id: unavailable_entities
+    #   icon: "{{ iif(states(this.entity_id)|int(0) > 0,'mdi:alert-circle','mdi:check-circle') }}"
+    #   unit_of_measurement: entities
+    #   state: >
+    #     {% set entities = state_attr(this.entity_id,'entity_id') %}
+    #     {% if entities != none %} {{ entities|count }} {% endif %}
+    #   attributes:
+    #     entity_id: >
+    #       {% set ignore_seconds = 240 %}
+    #       {% set ignored = state_attr('group.ignored_unavailable_entities','entity_id') %}
+    #       {% set ignore_ts = (now().timestamp() - ignore_seconds)|as_datetime %}
+    #       {% set entities = states|rejectattr('domain','eq','group')
+    #           |rejectattr('last_changed','ge',ignore_ts)
+    #           |selectattr('state','in',['unavailable','unknown']) %}
+    #       {% if ignored != none %}
+    #         {% set entities =  entities|rejectattr('entity_id','in',ignored) %}
+    #       {% endif %}
+    #       {{ entities|map(attribute='entity_id')|list }}

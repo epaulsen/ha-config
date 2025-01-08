@@ -13,19 +13,19 @@
     levels:
       - name: "Trinn 1: 0-2 kWh"
         threshold: 2
-        price: 135
+        price: 170
       - name: "Trinn 2: 2-5 kWh"
         threshold: 5
-        price: 170
+        price: 215
       - name: "Trinn 3: 5-10 kWh"
         threshold: 10
-        price: 290
+        price: 370
       - name: "Trinn 4: 10-15 kWh"
         threshold: 15
-        price: 600
+        price: 760
       - name: "Trinn 5: 15-20 kWh"
         threshold: 20
-        price: 800
+        price: 990
 
   - platform: nordpool
     VAT: True
@@ -39,8 +39,8 @@
       {% set s = {
         "innslag_stotte": 0.9125,
         "paaslag": 0,
-        "nettleie_natt": 0.35,
-        "nettleie_dag": 0.47
+        "nettleie_natt": 0.41,
+        "nettleie_dag": 0.53
       }
       %}
       {% set add_cost = 0%}
@@ -414,40 +414,4 @@
     unit_of_measurement: "kr"
     cron: monthly
 
-    
-
-  # - platform: rest
-  #   resource: https://stromstottekalkulator20221212092949.azurewebsites.net/api/stotte/area/NO2
-  #   # Gyldige verdier på slutten av resource er NO1,NO2,NO3,NO4 og NO5.
-  #   # Evt. Oslo,Kr.sand,Bergen,Tr.heim og Tromsø, fritt valg
-  #   name: Strømstøtte
-  #   unique_id: stromstotte_azure_func
-  #   scan_interval: 900
-  #   # Scanner hvert kvarter, kun for å holde liv i Azure-instansen(free tier, så lastes ut ganske så aggressivt)
-  #   # Behøver egentlig bare å kjøre en gang i døgnet, verdien vil kun oppdatere seg senest en time etter at
-  #   # Nordpool har publisert morgendagens priser(Azure-funksjonen poller en gang i timen mot Nordpool).
-
-  #   value_template: "{{ value_json.valueWithVAT | float | round(2) }}"
-  #   #For pris uten moms, bruk `value_json.value` på linja over
-
-  # - platform: rest
-  #   name: Neste buss template
-  #   scan_interval: 400 # Litt under hvert 7de minutt
-  #   resource: https://api.entur.io/journey-planner/v3/graphql
-  #   method: POST
-  #   payload: "{\"query\": \"{trip(from:{name:\\\"Skinnerheia 25, 4534 Kristiansand\\\" place:\\\"NSR:StopPlace:25191\\\"}to:{place:\\\"NSR:StopPlace:21924\\\" name:\\\"KKG\\\"}numTripPatterns:1){tripPatterns{aimedStartTime}}}\"}"
-  #   json_attributes:
-  #       - trip
-  #   json_attributes_path: "$.data"
-  #   value_template: "Ok"
-  #   #value_template: '{{ value_json.data.trip.tripPatterns[0].aimedStartTime }}'
-  #   headers:
-  #     ET-Client-Name: "Erling Paulsen-HomeAssistant Integrasjon"
-  #     Content-Type: application/json
-  #     User-Agent: REST
-
-#   - platform: command_line
-#     command: "curl -k --silent -X --header 'Accept: application/xml' 'https://api.met.no/weatherapi/textforecast/2.0/landoverview'"
-#     name: "Værvarsel tekst daglig"
-#     value_template: "{{ regex_findall('<location name=\"Agder\" id=\"0502\">(?<varsel>[æøåÆØÅ\\w\\s\\.,]+)<\\/location>')(0)}}"
-#     scan_interval: 21600
+  
