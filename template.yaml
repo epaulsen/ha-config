@@ -274,7 +274,7 @@
         {% set naa = now().hour %}
         {% set volt = states('sensor.0x086bd7fffeb6c404_voltage') | float(0) %}
         {% set effekt = volt * volt / 375 %}
-        {% if state_attr('climate.termostat_bad_oppe','running_state') == 'heat' %}
+        {% if state_attr('climate.termostat_bad_oppe','hvac_action') == 'heating' %}
         {{effekt}}
         {%else%}
         0
