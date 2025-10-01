@@ -12,28 +12,6 @@
         DAG
         {%endif%}
 
-    - name: "Søppeltømming i morgen"
-      unique_id: "soppeltomming_i_morgen"
-      icon: mdi:trash-can
-      state: >
-        {% set tomming=0 %}
-        {% if states('sensor.avfallsor_bio_ab2ad662_7a53_4453_bf5b_4bb0b932c3be') | float(0) == 1 %}
-        {% set tomming=1 %}
-        {% endif %}
-        {%if states('sensor.avfallsor_metal_ab2ad662_7a53_4453_bf5b_4bb0b932c3be') | float(0) ==1 %}
-        {% set tomming=1 %}
-        {% endif %}
-        {%if states('sensor.avfallsor_mixed_ab2ad662_7a53_4453_bf5b_4bb0b932c3be') | float(0) ==1 %}
-        {% set tomming=1 %}
-        {% endif %}
-        {%if states('sensor.avfallsor_paper_ab2ad662_7a53_4453_bf5b_4bb0b932c3be') | float(0) ==1 %}
-        {% set tomming=1 %}
-        {% endif %}
-        {%if states('sensor.avfallsor_plastic_ab2ad662_7a53_4453_bf5b_4bb0b932c3be') | float(0) ==1 %}
-        {% set tomming=1 %}
-        {% endif %}
-        {{ tomming }}
-
     - name: "Temperatur kjellergang"
       icon: "mdi:thermometer"
       unit_of_measurement: "°C"
@@ -50,6 +28,27 @@
       icon: "mdi:thermometer"
       unit_of_measurement: "°C"
       state: "{{ state_attr('climate.a_l_soverom','temperature') | float }}"
+
+    - name: "Nordpool spot timespris snitt Kr.Sand"
+      unit_of_measurement: "NOK/kWh"
+      state: >
+        {% set now = now() %}
+        {% set current_hour_start = now.replace(minute=0, second=0, microsecond=0) %}
+        {% set current_hour_end = current_hour_start + timedelta(hours=1) %}
+        {% set prices = state_attr('sensor.nordpool_kwh_no2_nok_3_095_025', 'raw_today') %}
+        {% set ns = namespace(values=[]) %}
+        {% for item in prices %}
+          {% set start_dt = item.start | as_datetime %}
+          {% set end_dt = item.end | as_datetime %}
+          {% if start_dt >= current_hour_start and end_dt <= current_hour_end %}
+            {% set ns.values = ns.values + [item.value] %}
+          {% endif %}
+        {% endfor %}
+        {% if ns.values | length > 0 %}
+          {{ (ns.values | sum / ns.values | length) | round(3) }}
+        {% else %}
+          unknown
+        {% endif %}
 
     # Sum av alt målt strømforbruk
     # Husk å oppdatere denne når nye enheter legges til.

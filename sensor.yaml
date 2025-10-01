@@ -54,6 +54,7 @@
     {% set add_cost = add_cost + s.nettleie_natt %}
     {%endif%}
     {{add_cost | float(3) }}
+    
 
 - platform: statistics
   name: "Utendørs temperatur minimum siste 8 timer"
