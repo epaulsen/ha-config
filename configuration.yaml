@@ -31,17 +31,34 @@ sensor: !include sensor.yaml
 template: !include template.yaml
 
 mqtt:
+  binary_sensor:
+    - name: "Wican Status"
+      unique_id: sensor.wican_online
+      state_topic: "wican/dc547562d409/can/status"
+      value_template: "{{ value_json.status }}"
+      payload_on: "online"
+      payload_off: "offline"
+      device_class: connectivity
   sensor:
     - name: "E-Golf SOC"
       unique_id: sensor.e_golf_soc
-      state_topic: "E_Golf/SOC"
+      state_topic: "E_Golf/SOC_2"
       unit_of_measurement: "%"
       value_template: "{{ value_json.soc | float(0) }}"
+      
     - name: "E-Golf Kilometerstand"
       unique_id: sensor.e_golf_kmstand
       state_topic: "E_Golf/Odometer"
       unit_of_measurement: "km"
       value_template: "{{ value_json.odometer }}"
+
+    - name: "Nordpool Spot Timespris Kr.Sand"
+      unique_id: "sensor.nordpool_spot_timespris_krsand"
+      state_topic: "Nordpool/Spot_Timespris/value"
+      unit_of_measurement: "NOK/kWh"
+      value_template: "{{ value_json | float(0) }}"
+      json_attributes_topic: "Nordpool/Spot_Timespris/attributes"
+      #json_attributes_template: "{{ value_json }}"
 
 # Database
 recorder:

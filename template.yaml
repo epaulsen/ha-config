@@ -29,26 +29,113 @@
       unit_of_measurement: "°C"
       state: "{{ state_attr('climate.a_l_soverom','temperature') | float }}"
 
-    - name: "Nordpool spot timespris snitt Kr.Sand"
+      #Norgespris versus Strømstøtte
+    - name: "Besparelse Norgespris total"
+      unique_id: "sensor.besparelse_norgespris_total"
+      icon: "mdi:currency-usd"
+      device_class: "monetary"
+      state_class: "measurement"
+      unit_of_measurement: "kr"
+      state: >
+        {{(states('sensor.stromstotte_kost_total') | float) - (states('sensor.norgespris_kost_total') | float)}}
+    - name: "Besparelse Norgespris i år"
+      unique_id: "sensor.besparelse_norgespris_aar"
+      icon: "mdi:currency-usd"
+      device_class: "monetary"
+      state_class: "measurement"
+      unit_of_measurement: "kr"
+      state: >
+        {{(states('sensor.stromstotte_kost_aar') | float) - (states('sensor.norgespris_kost_aar') | float)}}
+    - name: "Besparelse Norgespris denne måned"
+      unique_id: "sensor.besparelse_norgespris_mnd"
+      icon: "mdi:currency-usd"
+      device_class: "monetary"
+      state_class: "measurement"
+      unit_of_measurement: "kr"
+      state: >
+        {{(states('sensor.stromstotte_kost_mnd') | float) - (states('sensor.norgespris_kost_mnd') | float)}}
+
+    # Norgespris
+    - name: "Norgespris strøm ink. moms"
+      unique_id: "sensor.norgespris_strom_ink_moms"
+      state_class: measurement
       unit_of_measurement: "NOK/kWh"
       state: >
+        {{0.50 | float }}
+    
+    # Roborock antall timer
+    - name: "Kjøretid"
+      unique_id: sensor.nunu_total_cleaning_time_hours
+      state_class: measurement
+      device_class: duration
+      unit_of_measurement: h
+      state: >
+        {{states('sensor.gunda_total_cleaning_time') | float / 3600}}
+
+    - name: "E-Golf gjenværende ladetid"
+      unique_id: sensor.e_golf_gjenverende_ladetid
+      state_class: measurement
+      device_class: duration
+      unit_of_measurement: h
+      state: >
+        {%set hastighet = states('sensor.ehzyxy7d_power') | float%}
+        {% set batteri=(100-(states('sensor.e_golf_soc_2') | float) | float) /100 | float %}
+        {%if batteri == 0 %}
+        0
+        {%else%}
+          {% if hastighet == 0.0 %}
+          {% set hastighet = 3.5 %}
+          {% endif %}  
+          {% set gjenv_kwh = ((24 | float) * batteri) | float %}  
+          {% set total_minutes = ((gjenv_kwh / hastighet)*60) | int  %}
+          {{total_minutes / 60 | float}}          
+        {%endif%}
+
+    - name: "Norgespris strøm"
+      unique_id: "norgespris_nok_kwh"
+      unit_of_measurement: "NOK/kWh"
+      state: >
+        {% set base_price = 0.5 %}
         {% set now = now() %}
-        {% set current_hour_start = now.replace(minute=0, second=0, microsecond=0) %}
-        {% set current_hour_end = current_hour_start + timedelta(hours=1) %}
-        {% set prices = state_attr('sensor.nordpool_kwh_no2_nok_3_095_025', 'raw_today') %}
-        {% set ns = namespace(values=[]) %}
-        {% for item in prices %}
-          {% set start_dt = item.start | as_datetime %}
-          {% set end_dt = item.end | as_datetime %}
-          {% if start_dt >= current_hour_start and end_dt <= current_hour_end %}
-            {% set ns.values = ns.values + [item.value] %}
-          {% endif %}
-        {% endfor %}
-        {% if ns.values | length > 0 %}
-          {{ (ns.values | sum / ns.values | length) | round(3) }}
+        {% if now.hour >= 6 and now.hour < 22 %}
+          {{ (base_price + 0.5316) | round(4) }}
         {% else %}
-          unknown
+          {{ (base_price + 0.3816) | round(4) }}
         {% endif %}
+      attributes:
+        raw_today: >
+          {% set base_price = 0.5 %}
+          {% set day_tariff = 0.5316 %}
+          {% set night_tariff = 0.3816 %}
+          {% set today = now().date() %}
+          {% set intervals = namespace(data=[]) %}
+          {% for hour in range(24) %}
+            {% set start = today ~ 'T' ~ '{:02d}:00:00'.format(hour) %}
+            {% set end_hour = hour + 1 %}
+            {% set end = today ~ 'T' ~ '{:02d}:00:00'.format(end_hour if end_hour < 24 else 0) %}
+            {% set end_date = today if end_hour < 24 else (today + timedelta(days=1)) %}
+            {% set end = end_date ~ 'T' ~ '{:02d}:00:00'.format(end_hour if end_hour < 24 else 0) %}
+            {% set price = base_price + (day_tariff if hour >= 6 and hour < 22 else night_tariff) %}
+            {% set entry = {'start': start, 'end': end, 'value': price | round(4)} %}
+            {% set intervals.data = intervals.data + [entry] %}
+          {% endfor %}
+          {{ intervals.data }}
+        raw_tomorrow: >
+          {% set base_price = 0.5 %}
+          {% set day_tariff = 0.5316 %}
+          {% set night_tariff = 0.3816 %}
+          {% set tomorrow = (now().date() + timedelta(days=1)) %}
+          {% set intervals = namespace(data=[]) %}
+          {% for hour in range(24) %}
+            {% set start = tomorrow ~ 'T' ~ '{:02d}:00:00'.format(hour) %}
+            {% set end_hour = hour + 1 %}
+            {% set end_date = tomorrow if end_hour < 24 else (tomorrow + timedelta(days=1)) %}
+            {% set end = end_date ~ 'T' ~ '{:02d}:00:00'.format(end_hour if end_hour < 24 else 0) %}
+            {% set price = base_price + (day_tariff if hour >= 6 and hour < 22 else night_tariff) %}
+            {% set entry = {'start': start, 'end': end, 'value': price | round(4)} %}
+            {% set intervals.data = intervals.data + [entry] %}
+          {% endfor %}
+          {{ intervals.data }}
 
     # Sum av alt målt strømforbruk
     # Husk å oppdatere denne når nye enheter legges til.
